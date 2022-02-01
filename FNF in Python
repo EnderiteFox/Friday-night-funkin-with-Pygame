@@ -44,7 +44,7 @@ chart = None
 speed = 1.6
 useMustHitSection = False
 clock = time.Clock()
-if 640 > display.Info().current_h - 640:
+if 640 > display.Info().current_w - 640:
     singlePlayer = True
 else:
     singlePlayer = False
