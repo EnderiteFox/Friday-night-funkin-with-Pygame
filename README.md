@@ -1,6 +1,8 @@
 # Friday-night-funkin-with-Pygame
 This is just Friday Night Funkin, but coded in Python using the Pygame library
 
+Download to play: 
+
 You can add the files from any FNF mod, just follow the instructions:
 - Create a folder in assets\musics
 - add the Inst.ogg and Voices.ogg music files in the folder
