@@ -156,7 +156,7 @@ def play(music=False):
         open_file(music)
 
 
-play("Nacreous snowmelt")
+play("Quaoar")
 
 temp1 = Inst.get_length()
 temp2 = Vocals.get_length()
