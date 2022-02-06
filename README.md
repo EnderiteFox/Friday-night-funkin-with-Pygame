@@ -2,6 +2,7 @@
 This is just Friday Night Funkin, but coded in Python using the Pygame library
 
 Download to play: https://www.mediafire.com/file/yiek3fcnbifmr98/FNF+in+Python+v1.1.zip/file
+
 Current version: 1.1
 
 You can add the files from any FNF mod, just follow the instructions:
