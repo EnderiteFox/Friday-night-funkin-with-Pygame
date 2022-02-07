@@ -1,11 +1,12 @@
 # Friday-night-funkin-with-Pygame
 This is just Friday Night Funkin, but coded in Python using the Pygame library
 
-Download to play: https://www.mediafire.com/file/hxp430ia75u64kj/FNF_in_Python_v1.2.zip/file
+Download to play: https://www.mediafire.com/folder/viiyk6xdjiyhx/FNF_in_python
 
-Current version: 1.2
+Current version: 1.2.1
 
 Update 1.2: Added a main menu and reorganised files, bug fixes
+Update 1.2.1: Fixed a stack overflow issue
 
 You can add the files from any FNF mod, just follow the instructions:
 - Create a folder in assets\musics
