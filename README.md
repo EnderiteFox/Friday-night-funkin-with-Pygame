@@ -1,7 +1,7 @@
 # Friday-night-funkin-with-Pygame
 This is just Friday Night Funkin, but coded in Python using the Pygame library
 
-Download to play: https://www.mediafire.com/file/hxp430ia75u64kj/FNF+in+Python+v1.2.zip/file
+Download to play: https://www.mediafire.com/file/hxp430ia75u64kj/FNF_in_Python_v1.2.zip/file
 
 Current version: 1.2
 
