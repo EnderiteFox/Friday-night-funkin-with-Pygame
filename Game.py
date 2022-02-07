@@ -10,6 +10,7 @@ Vocals = None
 chart = None
 misses = 0
 
+
 def Main_game(musicName, speed):
     global Inst
     global Vocals
@@ -24,7 +25,6 @@ def Main_game(musicName, speed):
     screen = display.set_mode((0, 0), FULLSCREEN)
     mouse.set_visible(False)
     middleScreen = (display.Info().current_w // 2, display.Info().current_h // 2)
-
 
     def loadingscreen(progress):
         screen.fill((0, 0, 0))
@@ -45,7 +45,6 @@ def Main_game(musicName, speed):
             draw.rect(screen, (255, 255, 255), Rect(100, display.Info().current_h - 150, temp * progress, 50))
 
         display.flip()
-
 
     loadingscreen(0)
     # endregion
@@ -79,8 +78,9 @@ def Main_game(musicName, speed):
     # region images loading
     # region load images
     arrowsSkins = [
-        transform.scale(image.load("assets\Images\Arrows\{0}\Purple left arrow.png".format(arrowSkinID)).convert_alpha(),
-                        (150, 150)),
+        transform.scale(
+            image.load("assets\Images\Arrows\{0}\Purple left arrow.png".format(arrowSkinID)).convert_alpha(),
+            (150, 150)),
         transform.scale(image.load("assets\Images\Arrows\{0}\Blue down arrow.png".format(arrowSkinID)).convert_alpha(),
                         (150, 150)),
         transform.scale(image.load("assets\Images\Arrows\{0}\Green up arrow.png".format(arrowSkinID)).convert_alpha(),
@@ -89,10 +89,12 @@ def Main_game(musicName, speed):
                         (150, 150))]
 
     pressedArrowsSkins = [
-        transform.scale(image.load("assets\Images\Arrows\{0}\left pressed arrow.png".format(arrowSkinID)).convert_alpha(),
-                        (150, 150)),
-        transform.scale(image.load("assets\Images\Arrows\{0}\down pressed arrow.png".format(arrowSkinID)).convert_alpha(),
-                        (150, 150)),
+        transform.scale(
+            image.load("assets\Images\Arrows\{0}\left pressed arrow.png".format(arrowSkinID)).convert_alpha(),
+            (150, 150)),
+        transform.scale(
+            image.load("assets\Images\Arrows\{0}\down pressed arrow.png".format(arrowSkinID)).convert_alpha(),
+            (150, 150)),
         transform.scale(
             image.load("assets\Images\Arrows\{0}/up pressed arrow.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
@@ -145,7 +147,6 @@ def Main_game(musicName, speed):
 
     loadingscreen(1)
 
-
     # endregion
 
     # region music and chart loading
@@ -157,13 +158,11 @@ def Main_game(musicName, speed):
         Vocals = mixer.Sound("assets\Musics\{0}\Voices.ogg".format(music))
         chart = json.load(open("assets\Musics\{0}\chart.json".format(music)))["song"]["notes"]
 
-
     def play(music=False):
         if not music:
             open_file(musicList[randint(0, len(musicList) - 1)])
         else:
             open_file(music)
-
 
     play(musicName)
 
@@ -173,7 +172,6 @@ def Main_game(musicName, speed):
         musicLen = temp1
     else:
         musicLen = temp2
-
 
     # endregion
 
@@ -185,14 +183,12 @@ def Main_game(musicName, speed):
             self.side = side
             self.length = length
 
-
     class LongNote:
         def __init__(self, pos, column, side, isEnd):
             self.pos = pos
             self.column = column
             self.side = side
             self.isEnd = isEnd
-
 
     # region tests if chart uses mustHitSection
     notesChart = []
@@ -282,7 +278,6 @@ def Main_game(musicName, speed):
                 notesChart.append(Note(note[0], tempDirection, tempUser, note[2]))
     # endregion
 
-
     # region sort notes and create long notes
     temp = notesChart
     notesChart = []
@@ -302,32 +297,14 @@ def Main_game(musicName, speed):
         if note.length >= longNotesLen:
             for k in range(1, int(round(note.length // longNotesLen))):
                 longNotesChart.append(LongNote(note.pos + k * longNotesLen, note.column, note.side, False))
-            longNotesChart.append(LongNote(note.pos + (note.length // longNotesLen) * longNotesLen, note.column, note.side, True))
-
-    print(len(longNotesChart))
+            longNotesChart.append(
+                LongNote(note.pos + (note.length // longNotesLen) * longNotesLen, note.column, note.side, True))
 
     loadingscreen(2)
 
-
-
-    def quicksort(T):
-        if T==[]:
-            return []
-        else:
-            pivot=T[0]
-            T1=[]
-            T2=[]
-        for k in T[1:]:
-            if k.pos < pivot.pos:
-                T1.append(k)
-            else:
-                T2.append(k)
-        return quicksort(T1)+[pivot]+quicksort(T2)
-
-    longNotesChart = quicksort(longNotesChart)
+    longNotesChart.sort(key=lambda s: s.pos)
 
     loadingscreen(3)
-
 
     # endregion
     # endregion
@@ -374,7 +351,6 @@ def Main_game(musicName, speed):
             temp.topleft = (540, 50)
             screen.blit(greyArrow[3], temp)
 
-
     def drawNotes():
         global misses
         currentTime = Time.time() - startTime
@@ -384,7 +360,8 @@ def Main_game(musicName, speed):
             if renderNotes:
                 if note.side == "Opponent" and currentTime * 1000 >= note.pos:
                     notesChart.remove(note)
-                if currentTime * 1000 - 133 >= note.pos and note.side == "Player" and note.column in ["Left", "Down", "Up",
+                if currentTime * 1000 - 133 >= note.pos and note.side == "Player" and note.column in ["Left", "Down",
+                                                                                                      "Up",
                                                                                                       "Right"]:
                     notesChart.remove(note)
                     misses += 1
@@ -426,7 +403,6 @@ def Main_game(musicName, speed):
                 else:
                     renderNotes = False
 
-
     def drawLongNotes():
         currentTime = Time.time() - startTime
         width = display.Info().current_w
@@ -435,8 +411,10 @@ def Main_game(musicName, speed):
             if run:
                 if longNote.side == "Opponent" and currentTime * 1000 >= longNote.pos:
                     longNotesChart.remove(longNote)
-                if longNote.side == "Player" and currentTime * 1000 >= longNote.pos and longNote.column in ["Left", "Down",
-                                                                                                            "Up", "Right"]:
+                if longNote.side == "Player" and currentTime * 1000 >= longNote.pos and longNote.column in ["Left",
+                                                                                                            "Down",
+                                                                                                            "Up",
+                                                                                                            "Right"]:
                     if ((K_LEFT in keyPressed or K_a in keyPressed) and longNote.column == "Left") or (
                             (K_DOWN in keyPressed or K_s in keyPressed) and longNote.column == "Down") or (
                             (K_UP in keyPressed or K_w in keyPressed) and longNote.column == "Up") or (
@@ -504,9 +482,7 @@ def Main_game(musicName, speed):
                 else:
                     run = False
 
-
     # endregion
-
 
     keyPressed = []
 
@@ -514,7 +490,6 @@ def Main_game(musicName, speed):
     Vocals.play()
 
     startTime = Time.time()
-
     while True:
         notesToClear = [[], [], [], []]
         for events in event.get():
