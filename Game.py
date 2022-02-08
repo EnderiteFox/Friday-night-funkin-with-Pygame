@@ -9,14 +9,17 @@ Inst = None
 Vocals = None
 chart = None
 misses = 0
+health = 50
 
 
-def Main_game(musicName, speed):
+def Main_game(musicName, speed, playAs, noDying):
     global Inst
     global Vocals
     global chart
     global misses
+    global health
     misses = 0
+    health = 50
 
     init()
 
@@ -67,6 +70,7 @@ def Main_game(musicName, speed):
     showAccuracy = False
     accuracyIndicator = ""
     accuracyIndicatorTime = Time.time()
+    accuracyPercentList = []
 
     Font40 = font.SysFont("Comic Sans MS", 40)
 
@@ -173,6 +177,7 @@ def Main_game(musicName, speed):
     else:
         musicLen = temp2
 
+    loadingscreen(2)
     # endregion
 
     # region chart managment
@@ -226,6 +231,10 @@ def Main_game(musicName, speed):
     #           6 = player up
     #           7 = player right
 
+    if playAs == "Player":
+        tempPlayAs = ["Player", "Opponent"]
+    else:
+        tempPlayAs = ["Opponent", "Player"]
     for section in chart:
         if not useMustHitSection:
             tempMustHit = True
@@ -237,9 +246,9 @@ def Main_game(musicName, speed):
             if type(note[2]) == int or type(note[2]) == float:
                 if not useMustHitSection:
                     if 3 >= note[1] >= 0:
-                        tempUser = "Player"
+                        tempUser = tempPlayAs[0]
                     elif 7 >= note[1] >= 4:
-                        tempUser = "Opponent"
+                        tempUser = tempPlayAs[1]
                     if note[1] == 0 or note[1] == 5:
                         tempDirection = "Left"
                     if note[1] == 1 or note[1] == 4:
@@ -251,9 +260,9 @@ def Main_game(musicName, speed):
                 if useMustHitSection:
                     if tempMustHit:
                         if 3 >= note[1] >= 0:
-                            tempUser = "Player"
+                            tempUser = tempPlayAs[0]
                         if 7 >= note[1] >= 4:
-                            tempUser = "Opponent"
+                            tempUser = tempPlayAs[1]
                         if note[1] == 0 or note[1] == 4:
                             tempDirection = "Left"
                         if note[1] == 1 or note[1] == 5:
@@ -264,9 +273,9 @@ def Main_game(musicName, speed):
                             tempDirection = "Right"
                     if not tempMustHit:
                         if 3 >= note[1] >= 0:
-                            tempUser = "Opponent"
+                            tempUser = tempPlayAs[1]
                         if 7 >= note[1] >= 4:
-                            tempUser = "Player"
+                            tempUser = tempPlayAs[0]
                         if note[1] == 1 or note[1] == 5:
                             tempDirection = "Down"
                         if note[1] == 0 or note[1] == 4:
@@ -294,13 +303,11 @@ def Main_game(musicName, speed):
 
     longNotesLen = 42 // speed
     for note in notesChart:
-        if note.length >= longNotesLen:
+        if note.length >= longNotesLen > 0 and int(round(note.length // longNotesLen)):
             for k in range(1, int(round(note.length // longNotesLen))):
                 longNotesChart.append(LongNote(note.pos + k * longNotesLen, note.column, note.side, False))
             longNotesChart.append(
                 LongNote(note.pos + (note.length // longNotesLen) * longNotesLen, note.column, note.side, True))
-
-    loadingscreen(2)
 
     longNotesChart.sort(key=lambda s: s.pos)
 
@@ -353,6 +360,7 @@ def Main_game(musicName, speed):
 
     def drawNotes():
         global misses
+        global health
         currentTime = Time.time() - startTime
         width = display.Info().current_w
         renderNotes = True
@@ -365,6 +373,8 @@ def Main_game(musicName, speed):
                                                                                                       "Right"]:
                     notesChart.remove(note)
                     misses += 1
+                    health -= 4
+                    accuracyPercentList.append(0)
                 if 50 + (note.pos - currentTime * 1000) * speed < display.Info().current_h + 100:
                     if not singlePlayer:
                         if note.side == "Opponent" and note.column == "Down":
@@ -482,6 +492,20 @@ def Main_game(musicName, speed):
                 else:
                     run = False
 
+    def drawHealthBar():
+        global health
+        if health > 100:
+            health = 100
+        if health < 0:
+            health = 0
+        width = display.Info().current_w
+        height = display.Info().current_h
+        draw.rect(screen, (255, 255, 255), Rect(45, height - 115, width - 90, 60))
+        if health < 100:
+            draw.rect(screen, (255, 0, 0), Rect(50, height - 110, (width - 100) / 100 * (100 - health), 50))
+        if health > 0:
+            draw.rect(screen, (0, 255, 0), Rect(50 + (width - 100) / 100 * (100 - health), height - 110, (width - 100) / 100 * health, 50))
+
     # endregion
 
     keyPressed = []
@@ -542,19 +566,36 @@ def Main_game(musicName, speed):
                 # endregion
                 if currentTime * 1000 + 47 >= notesToClear[k][minX].pos >= currentTime * 1000 - 47:
                     accuracyIndicator = accuracyIndicatorImages[0]
+                    accuracyPercentList.append(1)
+                    health += 2.3
                 elif currentTime * 1000 + 79 >= notesToClear[k][minX].pos >= currentTime * 1000 - 79:
                     accuracyIndicator = accuracyIndicatorImages[1]
+                    accuracyPercentList.append(0.75)
+                    health += 0.4
                 elif currentTime * 1000 + 109 >= notesToClear[k][minX].pos >= currentTime * 1000 - 109:
                     accuracyIndicator = accuracyIndicatorImages[2]
+                    accuracyPercentList.append(0.5)
+                    health += 0.4
                 else:
                     accuracyIndicator = accuracyIndicatorImages[3]
+                    accuracyPercentList.append(-1)
+                    misses += 1
+                    health -= 4
                 notesChart.remove(notesToClear[k][minX])
         screen.fill((0, 0, 0))
         drawGreyNotes()
         drawLongNotes()
         drawNotes()
         # region draw bottom info bar
-        temp = Font40.render("Misses: {0}".format(misses), 1, (255, 255, 255))
+        if len(accuracyPercentList) == 0:
+            tempAccuracy = "NA"
+        else:
+            temp = 0
+            for element in accuracyPercentList:
+                temp += element
+            temp /= len(accuracyPercentList)
+            tempAccuracy = "{0}%".format(round(temp * 100, 2))
+        temp = Font40.render("Misses: {0} | Accuracy: {1}".format(misses, tempAccuracy), 1, (255, 255, 255))
         temp1 = temp.get_rect()
         temp1.midbottom = (middleScreen[0], display.Info().current_h - 5)
         screen.blit(temp, temp1)
@@ -582,8 +623,11 @@ def Main_game(musicName, speed):
             fpsList.remove(fpsList[0])
         screen.blit(Font40.render(str(round(temp, 2)), 1, (255, 255, 255)), Rect(5, 0, 0, 0))
         # endregion
+        # region health bar
+        drawHealthBar()
+        # endregion
         display.flip()
-        if Time.time() - startTime > musicLen:
+        if Time.time() - startTime > musicLen or (health <= 0 and not noDying):
             Inst.stop()
             Vocals.stop()
             return None
