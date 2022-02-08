@@ -6,3 +6,10 @@ Added main menu, fixed bugs, changed some files organisation
 
 V1.2.1:
 Fixed critical stack overflow issue
+
+V1.3:
+Added Main menu
+Added options (Note speed, side and no death mechanic)
+Added health mechanic
+Added accuracy (the same as Kade engine accurate mode)
+Added New songs
