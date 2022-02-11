@@ -3,7 +3,7 @@ This is just Friday Night Funkin, but coded in Python using the Pygame library
 
 Download latest version to play: https://www.mediafire.com/folder/viiyk6xdjiyhx/FNF_in_python
 
-Current version: 1.3
+Current version: 1.4
 
 Check changelog.txt for changelog
 
@@ -13,4 +13,5 @@ You can add the files from any FNF mod, just follow the instructions:
 - add the chart json file from the song in the foldes, and rename it to chart.json
 - Make sure the chart.json file organisation is {"song":{"notes":[]}} (often you just have to add the entire file in {"song": the whole file}
 - Edit the json file in assets\MusicList.json to add the name of your song (This should be the same name as the folder that contains your music)
+- To edit the background just drop an image named Background.png and it will automatically use it as a background for your song (Tip: don't save it with color depth of 32 or the game will lag)
 - Play (Main menu script) and select your song
