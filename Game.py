@@ -10,14 +10,16 @@ Vocals = None
 chart = None
 misses = 0
 health = 50
+BG = None
 
 
-def Main_game(musicName, speed, playAs, noDying):
+def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
     global Inst
     global Vocals
     global chart
     global misses
     global health
+    global BG
     misses = 0
     health = 50
 
@@ -74,8 +76,6 @@ def Main_game(musicName, speed, playAs, noDying):
 
     Font40 = font.SysFont("Comic Sans MS", 40)
 
-    arrowSkinID = "Basic"
-
     longNotesChart = []
     # endregion
 
@@ -83,27 +83,31 @@ def Main_game(musicName, speed, playAs, noDying):
     # region load images
     arrowsSkins = [
         transform.scale(
-            image.load("assets\Images\Arrows\{0}\Purple left arrow.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets\Images\ArrowStyles\{0}\Arrows\left.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
-        transform.scale(image.load("assets\Images\Arrows\{0}\Blue down arrow.png".format(arrowSkinID)).convert_alpha(),
+        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Arrows\down.png".format(arrowSkinID)).convert_alpha(),
                         (150, 150)),
-        transform.scale(image.load("assets\Images\Arrows\{0}\Green up arrow.png".format(arrowSkinID)).convert_alpha(),
+        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Arrows/up.png".format(arrowSkinID)).convert_alpha(),
                         (150, 150)),
-        transform.scale(image.load("assets\Images\Arrows\{0}\Red right arrow.png".format(arrowSkinID)).convert_alpha(),
-                        (150, 150))]
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Arrows/right.png".format(arrowSkinID)).convert_alpha(),
+            (150, 150))]
 
     pressedArrowsSkins = [
         transform.scale(
-            image.load("assets\Images\Arrows\{0}\left pressed arrow.png".format(arrowSkinID)).convert_alpha(),
+            image.load(
+                "assets\Images\ArrowStyles\{0}\Strum lines\Pressed\left.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets\Images\Arrows\{0}\down pressed arrow.png".format(arrowSkinID)).convert_alpha(),
+            image.load(
+                "assets\Images\ArrowStyles\{0}\Strum lines\Pressed\down.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets\Images\Arrows\{0}/up pressed arrow.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets\Images\ArrowStyles\{0}\Strum lines\Pressed/up.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets\Images\Arrows\{0}/right pressed arrow.png".format(arrowSkinID)).convert_alpha(),
+            image.load(
+                "assets\Images\ArrowStyles\{0}\Strum lines\Pressed/right.png".format(arrowSkinID)).convert_alpha(),
             (150, 150))]
 
     accuracyIndicatorImages = [
@@ -112,31 +116,54 @@ def Main_game(musicName, speed, playAs, noDying):
         transform.scale(image.load("assets\Images\Accuracy indicator/bad.png").convert_alpha(), (225, 100)),
         transform.scale(image.load("assets\Images\Accuracy indicator\shit.png").convert_alpha(), (225, 100))]
 
-    greyArrow = transform.scale(
-        image.load("assets\Images\Arrows\{0}\Strum line arrow modified.png".format(arrowSkinID)).convert_alpha(),
-        (150, 150))
-    greyArrow = [transform.rotate(greyArrow, 90), transform.rotate(greyArrow, 180), greyArrow,
-                 transform.rotate(greyArrow, -90)]
+    greyArrow = [
+        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Strum lines\Static\left.png".format(arrowSkinID)).convert_alpha(),
+                        (150, 150)),
+        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Strum lines\Static\down.png".format(arrowSkinID)).convert_alpha(),
+                        (150, 150)),
+        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Strum lines\Static/up.png".format(arrowSkinID)).convert_alpha(),
+                        (150, 150)),
+        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Strum lines\Static/right.png".format(arrowSkinID)).convert_alpha(),
+                        (150, 150))]
 
     longNotesImg = [
-        transform.scale(image.load("assets\Images\Long notes\{0}\Middle\left.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46)),
-        transform.scale(image.load("assets\Images\Long notes\{0}\Middle\down.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46)),
-        transform.scale(image.load("assets\Images\Long notes\{0}\Middle/up.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46)),
-        transform.scale(image.load("assets\Images\Long notes\{0}\Middle/right.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46))]
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle\left.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46)),
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle\down.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46)),
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle/up.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46)),
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle/right.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46))]
 
     longNotesEnd = [
-        transform.scale(image.load("assets\Images\Long notes\{0}\End\left.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46)),
-        transform.scale(image.load("assets\Images\Long notes\{0}\End\down.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46)),
-        transform.scale(image.load("assets\Images\Long notes\{0}\End/up.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46)),
-        transform.scale(image.load("assets\Images\Long notes\{0}\End/right.png".format(arrowSkinID)).convert_alpha(),
-                        (52, 46))]
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\End\left.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46)),
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\End\down.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46)),
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\End/up.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46)),
+        transform.scale(
+            image.load("assets\Images\ArrowStyles\{0}\Long notes\End/right.png".format(arrowSkinID)).convert_alpha(),
+            (52, 46))]
+
+    try:
+        print(display.Info().current_w, display.Info().current_h)
+        if not display.Info().current_w / display.Info().current_h == 1920 / 1080:
+            Background = transform.scale(image.load("assets\Musics\{0}\Background.png".format(musicName)), (1920, 1080))
+        else:
+            Background = transform.scale(image.load("assets\Musics\{0}\Background.png".format(musicName)), (display.Info().current_w, display.Info().current_h))
+    except:
+        Background = Font40.render("", 1, (255, 255, 255))
+    BGrect = Background.get_rect()
+    BGrect.center = (middleScreen[0], middleScreen[1])
 
     # endregion
 
@@ -178,6 +205,7 @@ def Main_game(musicName, speed, playAs, noDying):
         musicLen = temp2
 
     loadingscreen(2)
+
     # endregion
 
     # region chart managment
@@ -288,18 +316,7 @@ def Main_game(musicName, speed, playAs, noDying):
     # endregion
 
     # region sort notes and create long notes
-    temp = notesChart
-    notesChart = []
-
-    for k in range(len(temp)):
-        min = temp[0].pos
-        minX = 0
-        for x in range(len(temp)):
-            if temp[x].pos < min:
-                min = temp[x].pos
-                minX = x
-        notesChart.append(temp[minX])
-        temp.remove(temp[minX])
+    notesChart.sort(key=lambda s: s.pos)
 
     longNotesLen = 42 // speed
     for note in notesChart:
@@ -504,7 +521,8 @@ def Main_game(musicName, speed, playAs, noDying):
         if health < 100:
             draw.rect(screen, (255, 0, 0), Rect(50, height - 110, (width - 100) / 100 * (100 - health), 50))
         if health > 0:
-            draw.rect(screen, (0, 255, 0), Rect(50 + (width - 100) / 100 * (100 - health), height - 110, (width - 100) / 100 * health, 50))
+            draw.rect(screen, (0, 255, 0),
+                      Rect(50 + (width - 100) / 100 * (100 - health), height - 110, (width - 100) / 100 * health, 50))
 
     # endregion
 
@@ -533,7 +551,7 @@ def Main_game(musicName, speed, playAs, noDying):
                 for note in notesChart:
                     if testNotes:
                         if note.pos <= currentTime * 1000 + 133:
-                            if note.side == "Player" and currentTime * 1000 - 133 <= note.pos <= currentTime * 1000 + 133:
+                            if note.side == "Player" and currentTime * 1000 - 133 <= note.pos <= currentTime * 1000 + 133 and note.column in ["Left", "Down", "Up", "Right"]:
                                 if (events.key == K_a or events.key == K_LEFT) and note.column == "Left":
                                     notesToClear[0].append(note)
                                 if (events.key == K_s or events.key == K_DOWN) and note.column == "Down":
@@ -583,6 +601,7 @@ def Main_game(musicName, speed, playAs, noDying):
                     health -= 4
                 notesChart.remove(notesToClear[k][minX])
         screen.fill((0, 0, 0))
+        screen.blit(Background, BGrect)
         drawGreyNotes()
         drawLongNotes()
         drawNotes()
