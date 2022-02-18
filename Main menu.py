@@ -81,7 +81,9 @@ while True:
                 misses = 0
                 health = 50
                 BG = None
-                cProfile.run("Main_game(musicList[selectedMusic], selectedSpeed, playAs, noDying, availableNoteStyles[selectedNoteStyle])")
+                opponentAnimation = ["Up", -10]
+                playerAnimation = ["Up", -10]
+                Main_game(musicList[selectedMusic], selectedSpeed, playAs, noDying, availableNoteStyles[selectedNoteStyle])
             if currentMenu == "Main":
                 if selectedMain == 0:
                     currentMenu = "Select music"
