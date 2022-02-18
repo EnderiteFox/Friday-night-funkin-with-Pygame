@@ -3,7 +3,7 @@ This is just Friday Night Funkin, but coded in Python using the Pygame library
 
 Download latest version to play: https://www.mediafire.com/folder/viiyk6xdjiyhx/FNF_in_python
 
-Current version: 1.4
+Current version: 1.5
 
 Check changelog.txt for changelog
 
