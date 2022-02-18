@@ -1,0 +1,7 @@
+To add a song:
+- Create a folder in assets\Musics
+- Name it with the name of your song
+- Add the chart of your song in it and rename it "chart.json"
+- Add the Inst.ogg and Voices.ogg files
+- Add the name of your song in the assets\MusicList.json file
+- Your song now appears in the menu!
