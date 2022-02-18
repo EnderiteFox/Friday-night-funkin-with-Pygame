@@ -7,11 +7,6 @@ Current version: 1.5
 
 Check changelog.txt for changelog
 
-You can add the files from any FNF mod, just follow the instructions:
-- Create a folder in assets\musics
-- add the Inst.ogg and Voices.ogg music files in the folder
-- add the chart json file from the song in the foldes, and rename it to chart.json
-- Make sure the chart.json file organisation is {"song":{"notes":[]}} (often you just have to add the entire file in {"song": the whole file}
-- Edit the json file in assets\MusicList.json to add the name of your song (This should be the same name as the folder that contains your music)
-- To edit the background just drop an image named Background.png and it will automatically use it as a background for your song (Tip: don't save it with color depth of 32 or the game will lag)
-- Play (Main menu script) and select your song
+Follow the instructions in the "how to mod" folder to add your own songs!
+
+This game requires Pygame to run, you can download it by typing `python3 -m pip install -U pygame --user` or `py -m pip install -U pygame --user` in a cmd
