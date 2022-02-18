@@ -1,0 +1,15 @@
+How to add characters:
+- Create a folder in assets\Images\Characters named with the name of your character
+- Add the different animations in it and rename it:
+  - up.png for the up animation
+  - down.png for the down animation
+  - left.png for the left animation
+  - right.png for the right animation
+  - static.png for the idle animation
+- Go to your song's folder in assets\Musics
+- Create a songData.json file if there is not already one
+- add "character1": [] for the opponent and "character2": [] for the player
+- add "size": [[width multiplier, height multiplier] 5 times] in []
+- add "pos": [[how far it is from the edge of the screen (the left for the opponent and the right for the player, how far it is from the bottom of the screen] 5 times] in []
+- For "size" and "pos": the first element is for the left animation (right for the opponent), the 2nd is for down, the 3rd is for up, the 4th is for right (left for the opponent) and the 5th is for the idle animation
+- Your character should now appear in the song! This is the most complicated thing to mod, you can take a look in the other characters to know how it should look like
