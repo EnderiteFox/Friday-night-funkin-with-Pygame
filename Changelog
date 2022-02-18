@@ -17,3 +17,8 @@ Added New songs
 V1.4:
 Added backgrounds
 Added new note skin (Stepmania), you can change it in the settings
+
+V1.5:
+Added characters
+You can now hide the notes of a character by adding "modifications": ["hideNotes1"] in the songData.json file (it hides the opponent's notes, for the player use "hideNotes2")
+Added new songs
