@@ -22,3 +22,9 @@ V1.5:
 Added characters
 You can now hide the notes of a character by adding "modifications": ["hideNotes1"] in the songData.json file (it hides the opponent's notes, for the player use "hideNotes2")
 Added new songs
+
+V1.5.1:
+Added Death menu
+Added keybinds option
+Options now save when you quit the game
+Added a README.txt file with instructions how to play
