@@ -13,8 +13,10 @@ health = 50
 BG = None
 opponentAnimation = ["Up", -10]
 playerAnimation = ["Up", -10]
+hasPlayedMicDrop = False
 
-def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
+
+def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds):
     global Inst
     global Vocals
     global chart
@@ -23,10 +25,21 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
     global BG
     global opponentAnimation
     global playerAnimation
+    global options
+    global hasPlayedMicDrop
     misses = 0
     health = 50
 
     init()
+
+    K_a = keybinds[0]
+    K_s = keybinds[1]
+    K_w = keybinds[2]
+    K_d = keybinds[3]
+    K_LEFT = keybinds[4]
+    K_DOWN = keybinds[5]
+    K_UP = keybinds[6]
+    K_RIGHT = keybinds[7]
 
     # region loading
     # region screen and loading screen
@@ -91,6 +104,8 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
         modifications = json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["modifications"]
     except:
         modifications = []
+
+    hasPlayedMicDrop = False
     # endregion
 
     # region images loading
@@ -179,10 +194,12 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
 
     if backgroundName != "None":
         Background = []
-        for k in range(json.load(open("assets\Images\Backgrounds\{0}\stageData.json".format(backgroundName)))["numFrames"]):
+        for k in range(
+                json.load(open("assets\Images\Backgrounds\{0}\stageData.json".format(backgroundName)))["numFrames"]):
             if not display.Info().current_w / display.Info().current_h == 1920 / 1080:
                 Background.append(transform.scale(
-                    image.load("assets\Images/Backgrounds\{0}\Background{1}.png".format(backgroundName, k)), (1920, 1080)).convert_alpha())
+                    image.load("assets\Images/Backgrounds\{0}\Background{1}.png".format(backgroundName, k)),
+                    (1920, 1080)).convert_alpha())
             else:
                 Background.append(transform.scale(
                     image.load("assets\Images\Backgrounds\{0}\Background{1}.png".format(backgroundName, k)),
@@ -192,6 +209,8 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
     BGrect = Background[0].get_rect()
     BGrect.center = (middleScreen[0], middleScreen[1])
 
+    BFdead = image.load("assets\Images\Death screen\BF dead.png").convert_alpha()
+
     # endregion
 
     # region create image rect
@@ -199,6 +218,9 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
     accuracyIndicatorRect.center = (middleScreen[0], middleScreen[1] - 75)
 
     arrowRect = arrowsSkins[0].get_rect()
+
+    deathScreenRect = BFdead.get_rect()
+    deathScreenRect.midbottom = (middleScreen[0], display.Info().current_h - 50)
     # endregion
 
     musicList = json.load(open("assets/MusicList.json"))["musics"]
@@ -208,6 +230,10 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
     # endregion
 
     # region music and chart loading
+    deathScreenMusic = mixer.Sound("assets\Images\Death screen\gameOver.ogg")
+    deathScreenMusicEnd = mixer.Sound("assets\Images\Death screen\gameOverEnd.ogg")
+    deathScreenMusicStart = mixer.Sound("assets\Images\Death screen\micDrop.ogg")
+
     def open_file(music):
         global Inst
         global Vocals
@@ -385,13 +411,16 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
                         temp = 1
                 else:
                     temp = characterNum
-                self.size = json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character{0}".format(temp)]["size"]
+                self.size = \
+                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character{0}".format(temp)][
+                    "size"]
                 self.texture = [image.load("assets\Images\Characters\{0}\left.png".format(name)).convert_alpha(),
                                 image.load("assets\Images\Characters\{0}\down.png".format(name)).convert_alpha(),
                                 image.load("assets\Images\Characters\{0}/up.png".format(name)).convert_alpha(),
                                 image.load("assets\Images\Characters\{0}/right.png".format(name)).convert_alpha(),
                                 image.load("assets\Images\Characters\{0}\static.png".format(name)).convert_alpha()]
-                self.pos = json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character{0}".format(temp)]["pos"]
+                self.pos = \
+                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character{0}".format(temp)]["pos"]
                 for tab in self.pos:
                     for k in range(2):
                         if tab[k] == "centered":
@@ -414,7 +443,8 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
                                 else:
                                     tab[k] = middleScreen[k] - temp1
                 for k in range(5):
-                    self.texture[k] = transform.scale(self.texture[k], (self.texture[k].get_width() * self.size[k][0], self.texture[k].get_height() * self.size[k][1]))
+                    self.texture[k] = transform.scale(self.texture[k], (
+                    self.texture[k].get_width() * self.size[k][0], self.texture[k].get_height() * self.size[k][1]))
                 if characterNum == 2:
                     for k in range(5):
                         self.texture[k] = transform.flip(self.texture[k], True, False)
@@ -431,20 +461,24 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
 
     if playAs == "Player":
         try:
-            character1 = Character(json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character1"]["Name"], 1)
+            character1 = Character(
+                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character1"]["Name"], 1)
         except:
             character1 = Character("None", 1)
         try:
-            character2 = Character(json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character2"]["Name"], 2)
+            character2 = Character(
+                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character2"]["Name"], 2)
         except:
             character2 = Character("None", 2)
     else:
         try:
-            character1 = Character(json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character2"]["Name"], 1)
+            character1 = Character(
+                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character2"]["Name"], 1)
         except:
             character1 = Character("None", 1)
         try:
-            character2 = Character(json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character1"]["Name"], 2)
+            character2 = Character(
+                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character1"]["Name"], 2)
         except:
             character2 = Character("None", 2)
 
@@ -676,15 +710,48 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
         else:
             animationDirection = ["Left", "Down", "Up", "Right"].index(opponentAnimation[0])
         temp = character1.texture[animationDirection].get_rect()
-        temp.midbottom = [character1.pos[animationDirection][0], display.Info().current_h - character1.pos[animationDirection][1]]
+        temp.midbottom = [character1.pos[animationDirection][0],
+                          display.Info().current_h - character1.pos[animationDirection][1]]
         screen.blit(character1.texture[animationDirection], temp)
         if currentTime - playerAnimation[1] > 0.75:
             animationDirection = 4
         else:
             animationDirection = ["Left", "Down", "Up", "Right"].index(playerAnimation[0])
         temp = character2.texture[animationDirection].get_rect()
-        temp.midbottom = [display.Info().current_w - character2.pos[animationDirection][0], display.Info().current_h - character2.pos[animationDirection][1]]
+        temp.midbottom = [display.Info().current_w - character2.pos[animationDirection][0],
+                          display.Info().current_h - character2.pos[animationDirection][1]]
         screen.blit(character2.texture[animationDirection], temp)
+
+    # endregion
+
+    # region death screen
+    def death():
+        global hasPlayedMicDrop
+        startDeathTime = Time.time()
+        deathScreenMusicStart.play()
+        while True:
+            for events in event.get():
+                if events.type == QUIT:
+                    deathScreenMusic.stop()
+                    deathScreenMusicEnd.stop()
+                    quit()
+                    exit()
+                if events.type == KEYDOWN:
+                    if events.key == K_ESCAPE or events.key == K_BACKSPACE:
+                        deathScreenMusic.stop()
+                        return False
+                    if events.key == K_SPACE or events.key == K_RETURN:
+                        deathScreenMusic.stop()
+                        deathScreenMusicEnd.play()
+                        Time.sleep(deathScreenMusicEnd.get_length() - 2.5)
+                        deathScreenMusicEnd.stop()
+                        return True
+            screen.fill((0, 0, 0))
+            if Time.time() - startDeathTime > deathScreenMusicStart.get_length() - 1.5 and not hasPlayedMicDrop:
+                deathScreenMusic.play(-1)
+                hasPlayedMicDrop = True
+            screen.blit(BFdead, deathScreenRect)
+            display.flip()
 
     # endregion
 
@@ -697,10 +764,13 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
     while True:
         notesToClear = [[], [], [], []]
         for events in event.get():
-            if events.type == QUIT or (events.type == KEYDOWN and events.key == K_ESCAPE):
+            if events.type == QUIT:
+                quit()
+                exit()
+            if events.type == KEYDOWN and events.key == K_ESCAPE:
                 Inst.stop()
                 Vocals.stop()
-                return None
+                return False
             if events.type == KEYDOWN:
                 keyPressed.append(events.key)
             if events.type == KEYDOWN and events.key == K_SPACE:
@@ -812,7 +882,11 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID):
         drawHealthBar()
         # endregion
         display.flip()
-        if Time.time() - startTime > musicLen or (health <= 0 and not noDying):
+        if Time.time() - startTime > musicLen:
             Inst.stop()
             Vocals.stop()
-            return None
+            return False
+        if health <= 0 and not noDying:
+            Inst.stop()
+            Vocals.stop()
+            return death()
