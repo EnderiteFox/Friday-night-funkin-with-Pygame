@@ -3,9 +3,9 @@ This is just Friday Night Funkin, but coded in Python using the Pygame library
 
 Download latest version to play: https://www.mediafire.com/folder/viiyk6xdjiyhx/FNF_in_python
 
-Current version: 1.5
+Current version: 1.5.1
 
-Check changelog.txt for changelog
+Check Changelog.txt for changelog
 
 Follow the instructions in the "how to mod" folder to add your own songs!
 
