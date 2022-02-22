@@ -38,8 +38,12 @@ currentMenu = "Main"
 
 selectedSpeed = options["selectedSpeed"]
 playAs = options["playAs"]
-selectedNoteStyle = options["selectedNoteStyle"]
+if options["selectedNoteStyle"] < len(availableNoteStyles):
+    selectedNoteStyle = options["selectedNoteStyle"]
+else:
+    selectedNoteStyle = 0
 noDying = options["noDying"] == "True"
+downscroll = options["downscroll"] == "True"
 
 K_a = options["keybinds"][0]
 K_s = options["keybinds"][1]
@@ -65,7 +69,7 @@ def drawMusics():
 
 def drawOptions():
     tempText = ["Speed: {0}".format(selectedSpeed), "Play as: {0}".format(playAs), "No dying: {0}".format(noDying),
-                "Note style: {0}".format(availableNoteStyles[selectedNoteStyle]), "Keybinds"]
+                "Note style: {0}".format(availableNoteStyles[selectedNoteStyle]), "Downscroll: {0}".format(downscroll), "Keybinds"]
     for k in range(len(tempText)):
         temp = Font100.render(tempText[k], 1, (255, 255, 255))
         temp1 = temp.get_rect()
@@ -113,9 +117,10 @@ def saveOptions():
     options["selectedSpeed"] = selectedSpeed
     options["playAs"] = playAs
     if noDying:
-        options["noDying"] = True
+        options["noDying"] = "True"
     else:
-        options["noDying"] = False
+        options["noDying"] = "False"
+    options["downscroll"] = str(downscroll)
     options["selectedNoteStyle"] = selectedNoteStyle
     options["keybinds"] = [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT]
     json.dump(options, open("assets\options.json", "w"))
@@ -153,7 +158,7 @@ while True:
                     hasPlayedMicDrop = False
                     restart = Main_game(musicList[selectedMusic], selectedSpeed, playAs, noDying,
                                         availableNoteStyles[selectedNoteStyle],
-                                        [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT])
+                                        [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT], downscroll)
                 menuMusic.play(-1)
             if currentMenu == "Main":
                 if selectedMain == 0:
@@ -163,53 +168,56 @@ while True:
                     preventDoubleEnter = True
         if events.type == KEYDOWN:
             if currentMenu == "Select music":
-                if (events.key == K_w or events.key == K_UP) and selectedMusic > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedMusic > 0:
                     selectedMusic -= 1
-                if (events.key == K_s or events.key == K_DOWN) and selectedMusic < len(musicList) - 1:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedMusic < len(musicList) - 1:
                     selectedMusic += 1
             if currentMenu == "Options":
-                if (events.key == K_w or events.key == K_UP) and selectedOption > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedOption > 0:
                     selectedOption -= 1
-                if (events.key == K_s or events.key == K_DOWN) and selectedOption < 4:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedOption < 5:
                     selectedOption += 1
                 if selectedOption == 0:
-                    if (events.key == K_a or events.key == K_LEFT) and selectedSpeed > 0.1:
+                    if (events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904))) and selectedSpeed > 0.1:
                         selectedSpeed -= 0.1
                         selectedSpeed = round(selectedSpeed, 1)
-                    if events.key == K_d or events.key == K_RIGHT:
+                    if events.key == K_d or ((events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (events.key == 1073741903)):
                         selectedSpeed += 0.1
                         selectedSpeed = round(selectedSpeed, 1)
                 if selectedOption == 1:
-                    if events.key == K_a or events.key == K_LEFT or events.key == K_d or events.key == K_RIGHT:
+                    if events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904)) or events.key == K_d or events.key == K_RIGHT:
                         if playAs == "Player":
                             playAs = "Opponent"
                         else:
                             playAs = "Player"
                 if selectedOption == 2:
-                    if events.key == K_a or events.key == K_LEFT or events.key == K_d or events.key == K_RIGHT:
+                    if events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904)) or events.key == K_d or events.key == K_RIGHT:
                         if noDying:
                             noDying = False
                         else:
                             noDying = True
                 if selectedOption == 3:
-                    if (events.key == K_a or events.key == K_LEFT) and selectedNoteStyle > 0:
+                    if (events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904))) and selectedNoteStyle > 0:
                         selectedNoteStyle -= 1
-                    if (events.key == K_d or events.key == K_RIGHT) and selectedNoteStyle < len(
+                    if (events.key == K_d or ((events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (events.key == 1073741903))) and selectedNoteStyle < len(
                             availableNoteStyles) - 1:
                         selectedNoteStyle += 1
                 if selectedOption == 4:
+                    if (events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904))) or (events.key == K_d or ((events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (events.key == 1073741903))):
+                        downscroll = not downscroll
+                if selectedOption == 5:
                     if events.key == K_RETURN and not preventDoubleEnter:
                         currentMenu = "Keybinds"
                         preventDoubleEnter = True
             if currentMenu == "Main":
-                if (events.key == K_w or events.key == K_UP) and selectedMain > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedMain > 0:
                     selectedMain -= 1
-                if (events.key == K_s or events.key == K_DOWN) and selectedMain < 1:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedMain < 1:
                     selectedMain += 1
             if currentMenu == "Keybinds":
-                if (events.key == K_w or events.key == K_UP) and selectedKeybind > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedKeybind > 0:
                     selectedKeybind -= 1
-                if (events.key == K_s or events.key == K_DOWN) and selectedKeybind < 8:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedKeybind < 8:
                     selectedKeybind += 1
                 if events.key == K_RETURN and not preventDoubleEnter and selectedKeybind < 8:
                     currentMenu = "Edit keybind"
