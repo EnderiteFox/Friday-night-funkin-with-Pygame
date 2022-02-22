@@ -29,3 +29,9 @@ Added Death menu
 Added keybinds option
 Options now save when you quit the game
 Added a README.txt file with instructions how to play
+
+V1.5.2:
+Added downscroll
+Added song progress bar
+Added new musics
+Fixed a bug with the no dying option not saving correctly
