@@ -26,7 +26,9 @@ musicList = json.load(open("assets\MusicList.json"))["musics"]
 availableNoteStyles = json.load(open("assets/NoteStyles.json"))["NoteStyles"]
 
 Font100 = font.SysFont("Comic Sans MS", 100)
+Font125 = font.SysFont("Comic Sans MS", 125)
 FNFfont = font.Font("assets\Friday Night Funkin Font.ttf", 100)
+FNFfont125 = font.Font("assets\Friday Night Funkin Font.ttf", 125)
 
 options = json.load(open("assets\options.json"))
 
@@ -61,7 +63,10 @@ preventDoubleEnter = False
 
 def drawMusics():
     for k in range(len(musicList)):
-        temp = FNFfont.render(musicList[k], 1, (255, 255, 255))
+        if k == selectedMusic:
+            temp = FNFfont125.render(musicList[k], 1, (255, 255, 255))
+        else:
+            temp = FNFfont.render(musicList[k], 1, (200, 200, 200))
         temp1 = temp.get_rect()
         temp1.center = (middleScreen[0], middleScreen[1] + 200 * (k - selectedMusic))
         screen.blit(temp, temp1)
@@ -71,7 +76,10 @@ def drawOptions():
     tempText = ["Speed: {0}".format(selectedSpeed), "Play as: {0}".format(playAs), "No dying: {0}".format(noDying),
                 "Note style: {0}".format(availableNoteStyles[selectedNoteStyle]), "Downscroll: {0}".format(downscroll), "Keybinds"]
     for k in range(len(tempText)):
-        temp = Font100.render(tempText[k], 1, (255, 255, 255))
+        if k == selectedOption:
+            temp = Font125.render(tempText[k], 1, (255, 255, 255))
+        else:
+            temp = Font100.render(tempText[k], 1, (200, 200, 200))
         temp1 = temp.get_rect()
         temp1.center = (middleScreen[0], middleScreen[1] + 200 * (k - selectedOption))
         screen.blit(temp, temp1)
@@ -80,7 +88,10 @@ def drawOptions():
 def drawMain():
     tempText = ["Play", "Options"]
     for k in range(len(tempText)):
-        temp = FNFfont.render(tempText[k], 1, (255, 255, 255))
+        if k == selectedMain:
+            temp = FNFfont125.render(tempText[k], 1, (255, 255, 255))
+        else:
+            temp = FNFfont.render(tempText[k], 1, (200, 200, 200))
         temp1 = temp.get_rect()
         temp1.center = (middleScreen[0], middleScreen[1] + 200 * (k - selectedMain))
         screen.blit(temp, temp1)
@@ -95,7 +106,10 @@ def drawKeybinds():
                 "Right 2: {0}", "Reset keybinds"]
     for k in range(len(tempText)):
         tempText[k] = tempText[k].format(tempList[k])
-        temp = Font100.render(tempText[k], 1, (255, 255, 255))
+        if k == selectedKeybind:
+            temp = Font125.render(tempText[k], 1, (255, 255, 255))
+        else:
+            temp = Font100.render(tempText[k], 1, (200, 200, 200))
         temp1 = temp.get_rect()
         temp1.center = (middleScreen[0], middleScreen[1] + 200 * (k - selectedKeybind))
         screen.blit(temp, temp1)
@@ -156,6 +170,7 @@ while True:
                     opponentAnimation = ["Up", -10]
                     playerAnimation = ["Up", -10]
                     hasPlayedMicDrop = False
+                    combo = 0
                     restart = Main_game(musicList[selectedMusic], selectedSpeed, playAs, noDying,
                                         availableNoteStyles[selectedNoteStyle],
                                         [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT], downscroll)
