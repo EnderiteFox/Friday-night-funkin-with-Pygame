@@ -4,6 +4,7 @@ from random import *
 import time as Time
 import cProfile
 import sys
+import copy
 
 Inst = None
 Vocals = None
@@ -14,6 +15,7 @@ BG = None
 opponentAnimation = ["Up", -10]
 playerAnimation = ["Up", -10]
 hasPlayedMicDrop = False
+combo = 0
 
 
 def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscroll):
@@ -27,8 +29,10 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     global playerAnimation
     global options
     global hasPlayedMicDrop
+    global combo
     misses = 0
     health = 50
+    combo = 0
 
     init()
 
@@ -282,11 +286,12 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
 
     # region chart managment
     class Note:
-        def __init__(self, pos, column, side, length):
+        def __init__(self, pos, column, side, length, noteId):
             self.pos = pos
             self.column = column
             self.side = side
             self.length = length
+            self.id = noteId
 
     class LongNote:
         def __init__(self, pos, column, side, isEnd):
@@ -294,6 +299,17 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             self.column = column
             self.side = side
             self.isEnd = isEnd
+
+    class LongNoteGroup:
+        def __init__(self, groupId):
+            self.id = groupId
+            self.notes = []
+            self.size = 0
+            self.canDealDamage = True
+
+        def setSize(self):
+            self.notes.remove(self.notes[0])
+            self.size = len(self.notes)
 
     # region tests if chart uses mustHitSection
     notesChart = []
@@ -339,6 +355,8 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
         tempPlayAs = ["Player", "Opponent"]
     else:
         tempPlayAs = ["Opponent", "Player"]
+
+    tempNoteId = 0
     for section in chart:
         if not useMustHitSection:
             tempMustHit = True
@@ -388,7 +406,8 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                             tempDirection = "Up"
                         if note[1] == 3 or note[1] == 7:
                             tempDirection = "Right"
-                notesChart.append(Note(note[0], tempDirection, tempUser, note[2]))
+                notesChart.append(Note(note[0], tempDirection, tempUser, note[2], tempNoteId))
+                tempNoteId += 1
     # endregion
 
     # region sort notes and create long notes
@@ -397,12 +416,17 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     longNotesLen = 42 // speed
     for note in notesChart:
         if note.length >= longNotesLen > 0 and int(round(note.length // longNotesLen)):
+            tempGroup = LongNoteGroup(note.id)
             for k in range(1, int(round(note.length // longNotesLen))):
-                longNotesChart.append(LongNote(note.pos + k * longNotesLen, note.column, note.side, False))
-            longNotesChart.append(
+                tempGroup.notes.append(LongNote(note.pos + k * longNotesLen, note.column, note.side, False))
+            tempGroup.notes.append(
                 LongNote(note.pos + (note.length // longNotesLen) * longNotesLen, note.column, note.side, True))
+            tempGroup.setSize()
+            longNotesChart.append(tempGroup)
 
-    longNotesChart.sort(key=lambda s: s.pos)
+    longNotesChart.sort(key=lambda s: s.id)
+    for element in longNotesChart:
+        element.notes.sort(key=lambda s: s.pos)
 
     loadingscreen(3)
 
@@ -578,6 +602,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
         global misses
         global health
         global opponentAnimation
+        global combo
         currentTime = Time.time() - startTime
         width = display.Info().current_w
         height = display.Info().current_h
@@ -591,10 +616,15 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 if currentTime * 1000 - 133 >= note.pos and note.side == "Player" and note.column in ["Left", "Down",
                                                                                                       "Up",
                                                                                                       "Right"]:
+                    for noteGroup in longNotesChart:
+                        if noteGroup.id == note.id:
+                            noteGroup.canDealDamage = False
+                            break
                     notesChart.remove(note)
                     misses += 1
                     health -= 4
                     accuracyPercentList.append(0)
+                    combo = 0
                 if 50 + (note.pos - currentTime * 1000) * speed < display.Info().current_h + 100:
                     if not singlePlayer and "hideNotes1" not in modifications:
                         if note.side == "Opponent" and note.column == "Down":
@@ -661,116 +691,157 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     def drawLongNotes():
         global opponentAnimation
         global playerAnimation
+        global misses
+        global health
+        global combo
         currentTime = Time.time() - startTime
         width = display.Info().current_w
         height = display.Info().current_h
-        run = True
-        for longNote in longNotesChart:
-            if run:
-                if currentTime * 1000 - 133 >= longNote.pos:
-                    longNotesChart.remove(longNote)
-                else:
-                    if longNote.side == "Opponent" and currentTime * 1000 >= longNote.pos:
-                        if currentTime - opponentAnimation[1] > 0.7:
-                            opponentAnimation = [longNote.column, currentTime]
-                        opponentHitTimes[["Left", "Down", "Up", "Right"].index(longNote.column)] = currentTime
-                        longNotesChart.remove(longNote)
-                    if longNote.side == "Player" and currentTime * 1000 >= longNote.pos and longNote.column in ["Left",
-                                                                                                                "Down",
-                                                                                                                "Up",
-                                                                                                                "Right"]:
-                        if ((K_LEFT in keyPressed or K_a in keyPressed) and longNote.column == "Left") or (
-                                (K_DOWN in keyPressed or K_s in keyPressed) and longNote.column == "Down") or (
-                                (K_UP in keyPressed or K_w in keyPressed) and longNote.column == "Up") or (
-                                (K_RIGHT in keyPressed or K_d in keyPressed) and longNote.column == "Right"):
-                            if currentTime - playerAnimation[1] > 0.7:
-                                playerAnimation = [longNote.column, currentTime]
-                            longNotesChart.remove(longNote)
-                    if 50 + (longNote.pos - currentTime * 1000) * speed < display.Info().current_h + 100:
-                        if not singlePlayer and longNote.side == "Opponent" and "hideNotes1" not in modifications:
-                            if longNote.column == "Down":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (220 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (220 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[1], temp)
-                                else:
-                                    screen.blit(longNotesImg[1], temp)
-                            if longNote.column == "Left":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (60 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (60 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[0], temp)
-                                else:
-                                    screen.blit(longNotesImg[0], temp)
-                            if longNote.column == "Up":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (380 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (380 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[2], temp)
-                                else:
-                                    screen.blit(longNotesImg[2], temp)
-                            if longNote.column == "Right":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (540 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (540 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[3], temp)
-                                else:
-                                    screen.blit(longNotesImg[3], temp)
-                        if longNote.side == "Player" and "hideNotes2" not in modifications:
-                            if longNote.column == "Up":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (width - 220 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (width - 220 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[2], temp)
-                                else:
-                                    screen.blit(longNotesImg[2], temp)
-                            if longNote.column == "Down":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (width - 380 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (width - 380 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[1], temp)
-                                else:
-                                    screen.blit(longNotesImg[1], temp)
-                            if longNote.column == "Left":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (width - 540 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (width - 540 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[0], temp)
-                                else:
-                                    screen.blit(longNotesImg[0], temp)
-                            if longNote.column == "Right":
-                                temp = arrowRect
-                                if not downscroll:
-                                    temp.center = (width - 60 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
-                                else:
-                                    temp.center = (width - 60 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
-                                if longNote.isEnd:
-                                    screen.blit(longNotesEnd[3], temp)
-                                else:
-                                    screen.blit(longNotesImg[3], temp)
+        deleteList = []
+        for noteGroup in longNotesChart:
+            deleteGroup = False
+            run = True
+            if len(noteGroup.notes) == 0:
+                run = False
+                deleteGroup = True
+            if run and 50 + (noteGroup.notes[0].pos - currentTime * 1000) * speed < height + 100:
+                for longNote in noteGroup.notes:
+                    transparent = False
+                    if currentTime * 1000 - 133 >= longNote.pos:
+                        if longNote.side == "Player":
+                            if (noteGroup.size - len(noteGroup.notes)) / noteGroup.size >= 0.75:
+                                noteGroup.canDealDamage = False
+                            if noteGroup.canDealDamage:
+                                misses += 1
+                                health -= 4
+                                accuracyPercentList.append(0)
+                                combo = 0
+                                noteGroup.canDealDamage = False
+                            noteGroup.notes.remove(longNote)
                     else:
-                        run = False
+                        if noteGroup.canDealDamage:
+                            transparent = False
+                        else:
+                            transparent = True
+                        if longNote.side == "Opponent" and currentTime * 1000 >= longNote.pos:
+                            if currentTime - opponentAnimation[1] > 0.7:
+                                opponentAnimation = [longNote.column, currentTime]
+                            opponentHitTimes[["Left", "Down", "Up", "Right"].index(longNote.column)] = currentTime
+                            noteGroup.notes.remove(longNote)
+                        if longNote.side == "Player" and currentTime * 1000 >= longNote.pos and longNote.column in ["Left",
+                                                                                                                    "Down",
+                                                                                                                    "Up",
+                                                                                                                    "Right"]:
+                            if ((K_LEFT in keyPressed or K_a in keyPressed) and longNote.column == "Left") or (
+                                    (K_DOWN in keyPressed or K_s in keyPressed) and longNote.column == "Down") or (
+                                    (K_UP in keyPressed or K_w in keyPressed) and longNote.column == "Up") or (
+                                    (K_RIGHT in keyPressed or K_d in keyPressed) and longNote.column == "Right"):
+                                if currentTime - playerAnimation[1] > 0.7:
+                                    playerAnimation = [longNote.column, currentTime]
+                                noteGroup.notes.remove(longNote)
+                        if 50 + (longNote.pos - currentTime * 1000) * speed < height + 100:
+                            if not singlePlayer and longNote.side == "Opponent" and "hideNotes1" not in modifications:
+                                if longNote.column == "Down":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (220 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (220 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        screen.blit(longNotesEnd[1], temp)
+                                    else:
+                                        screen.blit(longNotesImg[1], temp)
+                                if longNote.column == "Left":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (60 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (60 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        screen.blit(longNotesEnd[0], temp)
+                                    else:
+                                        screen.blit(longNotesImg[0], temp)
+                                if longNote.column == "Up":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (380 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (380 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        screen.blit(longNotesEnd[2], temp)
+                                    else:
+                                        screen.blit(longNotesImg[2], temp)
+                                if longNote.column == "Right":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (540 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (540 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        screen.blit(longNotesEnd[3], temp)
+                                    else:
+                                        screen.blit(longNotesImg[3], temp)
+                            if longNote.side == "Player" and "hideNotes2" not in modifications:
+                                if longNote.column == "Up":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (width - 220 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (width - 220 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        img = copy.copy(longNotesEnd[2])
+                                    else:
+                                        img = copy.copy(longNotesImg[2])
+                                    if transparent:
+                                        img.set_alpha(100)
+                                    screen.blit(img, temp)
+                                if longNote.column == "Down":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (width - 380 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (width - 380 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        img = copy.copy(longNotesEnd[1])
+                                    else:
+                                        img = copy.copy(longNotesImg[1])
+                                    if transparent:
+                                        img.set_alpha(100)
+                                    screen.blit(img, temp)
+                                if longNote.column == "Left":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (width - 540 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (width - 540 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        img = copy.copy(longNotesEnd[0])
+                                    else:
+                                        img = copy.copy(longNotesImg[0])
+                                    if transparent:
+                                        img.set_alpha(100)
+                                    screen.blit(img, temp)
+                                if longNote.column == "Right":
+                                    temp = arrowRect
+                                    if not downscroll:
+                                        temp.center = (width - 60 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    else:
+                                        temp.center = (width - 60 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                    if longNote.isEnd:
+                                        img = copy.copy(longNotesEnd[3])
+                                    else:
+                                        img = copy.copy(longNotesImg[3])
+                                    if transparent:
+                                        img.set_alpha(100)
+                                    screen.blit(img, temp)
+            if deleteGroup:
+                deleteList.append(noteGroup.id)
+        for element in longNotesChart:
+            if element.id in deleteList:
+                deleteList.remove(element.id)
+                longNotesChart.remove(element)
+            if len(deleteList) == 0:
+                break
 
     def drawHealthBar():
         global health
@@ -937,23 +1008,27 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                     accuracyIndicator = accuracyIndicatorImages[0]
                     accuracyPercentList.append(1)
                     health += 2.3
+                    combo += 1
                 elif currentTime * 1000 + 79 >= notesToClear[k][minX].pos >= currentTime * 1000 - 79:
                     accuracyIndicator = accuracyIndicatorImages[1]
                     accuracyPercentList.append(0.75)
                     health += 0.4
+                    combo += 1
                 elif currentTime * 1000 + 109 >= notesToClear[k][minX].pos >= currentTime * 1000 - 109:
                     accuracyIndicator = accuracyIndicatorImages[2]
                     accuracyPercentList.append(0.5)
                     health += 0.4
+                    combo += 1
                 else:
                     accuracyIndicator = accuracyIndicatorImages[3]
                     accuracyPercentList.append(-1)
                     misses += 1
                     health -= 4
+                    combo = 0
                 playerAnimation = [notesToClear[k][minX].column, currentTime]
                 notesChart.remove(notesToClear[k][minX])
         screen.fill((0, 0, 0))
-        backgroundFrameNum = int(((Time.time() - startTime) / bpm * len(Background)) % len(Background))
+        backgroundFrameNum = int(((Time.time() - startTime) / (bpm / len(Background))) % len(Background))
         screen.blit(Background[backgroundFrameNum], BGrect)
         drawCharacters()
         drawGreyNotes()
@@ -969,7 +1044,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 temp += element
             temp /= len(accuracyPercentList)
             tempAccuracy = "{0}%".format(round(temp * 100, 2))
-        temp = Font40.render("Misses: {0} | Accuracy: {1}".format(misses, tempAccuracy), 1, (255, 255, 255))
+        temp = Font40.render("Combo: {0} | Misses: {1} | Accuracy: {2}".format(combo, misses, tempAccuracy), 1, (255, 255, 255))
         temp1 = temp.get_rect()
         if not downscroll:
             temp1.midbottom = (middleScreen[0], display.Info().current_h - 5)
