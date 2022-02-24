@@ -35,3 +35,16 @@ Added downscroll
 Added song progress bar
 Added new musics
 Fixed a bug with the no dying option not saving correctly
+
+V1.6:
+Changed the menu, now you can see more easily which option is selected
+Reworked the long notes system, they are now integrated to gameplay!
+How they work:
+- If you miss a note and it has a long note attached to it, you will have only 1 miss, the long note can't deal damage
+- If you hit a note and it has a long note attached to it, the long note will be able to deal damage
+- If you release a long note too early and you hit less than 75% of it, you will get a miss
+- If you release a long note too early and you hit more than 75% of it, you won't get a miss (so if you miss a little bit of the long note in the end of it you won't get a miss)
+- When a long note can't deal damage, it will appear transparent
+Tell me what you think about this mechanic and if I need to change something!
+The game is now available as a .exe file! (Took me 3 days to figure out how to do this XD)
+
