@@ -6,9 +6,7 @@ How to add a background:
 - Add `{"numFrames": 1}` in it
 - Go to the song where you want to add the background
 - Create a songData.json file if there is not already one
-- Add 
-```"stage": background name```
-in the songData.json file (if your song has a background and no characters it should look like this: `{"stage": background name}`)
+- Add `"stage": background name` in the songData.json file (if your song has a background and no characters it should look like this: `{"stage": background name}`)
 - Your song now uses the background you created!
 
 How to add an animated background:
