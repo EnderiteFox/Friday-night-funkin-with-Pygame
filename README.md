@@ -7,6 +7,7 @@ The game is now available as a .exe file, no more installing Python and Pygame!
 Current version: 1.6
 
 Changelog [here](Changelog)
+
 Documentation on how to mod [here](How to mod)
 
 Follow the instructions in the "how to mod" folder to add your own songs!
