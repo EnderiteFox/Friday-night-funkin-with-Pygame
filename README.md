@@ -10,4 +10,6 @@ Changelog [here](Changelog)
 
 Follow the instructions in the "how to mod" folder to add your own songs!
 
-This game requires Pygame to run the python version, you can download it by typing `python3 -m pip install -U pygame --user` or `py -m pip install -U pygame --user` in a cmd
+This game requires Pygame to run the python version, you can download it by typing `python3 -m pip install -U pygame --user` or `py -m pip install -U pygame --user` in a cmd.
+
+It is also recommended to run the game on Pycharm, as running it in EduPython can cause issues
