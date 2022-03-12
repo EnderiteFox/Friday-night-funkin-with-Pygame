@@ -7,6 +7,9 @@ More detailed:
   - Fixed characters not appearing on certain conditions (I think Python >=3.9 and EduPython)
   - Improved display for display with a resolution inferior to 1080p
   - Fixed the some maths, now animated backgrounds will display correctly, with their speed changed according to the bpm (faster bpm = faster animation)
+  - Fixed a bug with the song progress bar not displaying correctly when playing in downscroll mode
+  - Added idle animation
+  - Characters now use a png and xml file, so now it's easier to add characters
   Still in developpement:
   - Animation rework (XML file reading done)
   - Some modded things (modcharts)
