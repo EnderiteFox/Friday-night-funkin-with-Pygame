@@ -5,6 +5,7 @@ import time as Time
 import cProfile
 import sys
 import copy
+import os
 
 Inst = None
 Vocals = None
@@ -106,7 +107,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     playerAnimation = ["Up", -10]
 
     try:
-        modifications = json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["modifications"]
+        modifications = json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["modifications"]
     except:
         modifications = []
 
@@ -117,65 +118,65 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     # region load images
     arrowsSkins = [
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Arrows\left.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Arrows"+os.path.sep+"left.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
-        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Arrows\down.png".format(arrowSkinID)).convert_alpha(),
+        transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Arrows"+os.path.sep+"down.png".format(arrowSkinID)).convert_alpha(),
                         (150, 150)),
-        transform.scale(image.load("assets\Images\ArrowStyles\{0}\Arrows/up.png".format(arrowSkinID)).convert_alpha(),
+        transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Arrows"+os.path.sep+"up.png".format(arrowSkinID)).convert_alpha(),
                         (150, 150)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Arrows/right.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Arrows"+os.path.sep+"right.png".format(arrowSkinID)).convert_alpha(),
             (150, 150))]
 
     pressedArrowsSkins = [
         transform.scale(
             image.load(
-                "assets\Images\ArrowStyles\{0}\Strum lines\Pressed\left.png".format(arrowSkinID)).convert_alpha(),
+                "assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Pressed"+os.path.sep+"left.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
             image.load(
-                "assets\Images\ArrowStyles\{0}\Strum lines\Pressed\down.png".format(arrowSkinID)).convert_alpha(),
+                "assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Pressed"+os.path.sep+"down.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Strum lines\Pressed/up.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Pressed"+os.path.sep+"up.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
             image.load(
-                "assets\Images\ArrowStyles\{0}\Strum lines\Pressed/right.png".format(arrowSkinID)).convert_alpha(),
+                "assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Pressed"+os.path.sep+"right.png".format(arrowSkinID)).convert_alpha(),
             (150, 150))]
 
     accuracyIndicatorImages = [
-        transform.scale(image.load("assets\Images\Accuracy indicator\sick.png").convert_alpha(), (225, 100)),
-        transform.scale(image.load("assets\Images\Accuracy indicator\good.png").convert_alpha(), (225, 100)),
-        transform.scale(image.load("assets\Images\Accuracy indicator/bad.png").convert_alpha(), (225, 100)),
-        transform.scale(image.load("assets\Images\Accuracy indicator\shit.png").convert_alpha(), (225, 100))]
+        transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"Accuracy indicator"+os.path.sep+"sick.png").convert_alpha(), (225, 100)),
+        transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"Accuracy indicator"+os.path.sep+"good.png").convert_alpha(), (225, 100)),
+        transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"Accuracy indicator"+os.path.sep+"bad.png").convert_alpha(), (225, 100)),
+        transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"Accuracy indicator"+os.path.sep+"shit.png").convert_alpha(), (225, 100))]
 
     greyArrow = [
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Strum lines\Static\left.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Static"+os.path.sep+"left.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Strum lines\Static\down.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Static"+os.path.sep+"down.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Strum lines\Static/up.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Static"+os.path.sep+"up.png".format(arrowSkinID)).convert_alpha(),
             (150, 150)),
         transform.scale(image.load(
-            "assets\Images\ArrowStyles\{0}\Strum lines\Static/right.png".format(arrowSkinID)).convert_alpha(),
+            "assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Strum lines"+os.path.sep+"Static"+os.path.sep+"right.png".format(arrowSkinID)).convert_alpha(),
                         (150, 150))]
 
     longNotesImg = [
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle\left.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"Middle"+os.path.sep+"left.png".format(arrowSkinID)).convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle\down.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"Middle"+os.path.sep+"down.png".format(arrowSkinID)).convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle/up.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"Middle"+os.path.sep+"up.png".format(arrowSkinID)).convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\Middle/right.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"Middle"+os.path.sep+"right.png".format(arrowSkinID)).convert_alpha(),
             (52, 46))]
 
     if downscroll:
@@ -184,16 +185,16 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
 
     longNotesEnd = [
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\End\left.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"End"+os.path.sep+"left.png".format(arrowSkinID)).convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\End\down.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"End"+os.path.sep+"down.png".format(arrowSkinID)).convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\End/up.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"End"+os.path.sep+"up.png".format(arrowSkinID)).convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets\Images\ArrowStyles\{0}\Long notes\End/right.png".format(arrowSkinID)).convert_alpha(),
+            image.load("assets"+os.path.sep+"Images"+os.path.sep+"ArrowStyles"+os.path.sep+"{0}"+os.path.sep+"Long notes"+os.path.sep+"End"+os.path.sep+"right.png".format(arrowSkinID)).convert_alpha(),
             (52, 46))]
 
     if downscroll:
@@ -201,28 +202,28 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             longNotesEnd[k] = transform.flip(longNotesEnd[k], False, True)
 
     try:
-        backgroundName = json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["stage"]
+        backgroundName = json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["stage"]
     except:
         backgroundName = "None"
 
     if backgroundName != "None":
         Background = []
         for k in range(
-                json.load(open("assets\Images\Backgrounds\{0}\stageData.json".format(backgroundName)))["numFrames"]):
+                json.load(open("assets"+os.path.sep+"Images"+os.path.sep+"Backgrounds"+os.path.sep+"{0}"+os.path.sep+"stageData.json".format(backgroundName)))["numFrames"]):
             if not display.Info().current_w / display.Info().current_h == 1920 / 1080:
                 Background.append(transform.scale(
-                    image.load("assets\Images/Backgrounds\{0}\Background{1}.png".format(backgroundName, k)),
+                    image.load("assets"+os.path.sep+"Images"+os.path.sep+"Backgrounds"+os.path.sep+"{0}"+os.path.sep+"Background{1}.png".format(backgroundName, k)),
                     (1920, 1080)).convert_alpha())
             else:
                 Background.append(transform.scale(
-                    image.load("assets\Images\Backgrounds\{0}\Background{1}.png".format(backgroundName, k)),
+                    image.load("assets"+os.path.sep+"Images"+os.path.sep+"Backgrounds"+os.path.sep+"{0}"+os.path.sep+"Background{1}.png".format(backgroundName, k)),
                     (display.Info().current_w, display.Info().current_h)).convert_alpha())
     else:
         Background = [Font40.render("", 1, (255, 255, 255))]
     BGrect = Background[0].get_rect()
     BGrect.center = (middleScreen[0], middleScreen[1])
 
-    BFdead = image.load("assets\Images\Death screen\BF dead.png").convert_alpha()
+    BFdead = image.load("assets"+os.path.sep+"Images"+os.path.sep+"Death screen"+os.path.sep+"BF dead.png").convert_alpha()
 
     # endregion
 
@@ -236,31 +237,31 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     deathScreenRect.midbottom = (middleScreen[0], display.Info().current_h - 50)
     # endregion
 
-    musicList = json.load(open("assets/MusicList.json"))["musics"]
+    musicList = json.load(open("assets"+os.path.sep+"MusicList.json"))["musics"]
 
     loadingscreen(1)
 
     # endregion
 
     # region music and chart loading
-    deathScreenMusic = mixer.Sound("assets\Images\Death screen\gameOver.ogg")
-    deathScreenMusicEnd = mixer.Sound("assets\Images\Death screen\gameOverEnd.ogg")
-    deathScreenMusicStart = mixer.Sound("assets\Images\Death screen\micDrop.ogg")
+    deathScreenMusic = mixer.Sound("assets"+os.path.sep+"Images"+os.path.sep+"Death screen"+os.path.sep+"gameOver.ogg")
+    deathScreenMusicEnd = mixer.Sound("assets"+os.path.sep+"Images"+os.path.sep+"Death screen"+os.path.sep+"gameOverEnd.ogg")
+    deathScreenMusicStart = mixer.Sound("assets"+os.path.sep+"Images"+os.path.sep+"Death screen"+os.path.sep+"micDrop.ogg")
 
     def open_file(music):
         global Inst
         global Vocals
         global chart
-        Inst = mixer.Sound("assets\Musics\{0}\Inst.ogg".format(music))
-        Vocals = mixer.Sound("assets\Musics\{0}\Voices.ogg".format(music))
+        Inst = mixer.Sound("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"Inst.ogg".format(music))
+        Vocals = mixer.Sound("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"Voices.ogg".format(music))
         try:
-            chart = json.load(open("assets\Musics\{0}\chart.json".format(music)))["song"]["notes"]
+            chart = json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"chart.json".format(music)))["song"]["notes"]
         except:
-            chart = {"song": json.load(open("assets\Musics\{0}\chart.json".format(music)))}
-            json.dump(chart, open("assets\Musics\{0}\chart.json".format(music), "w"))
+            chart = {"song": json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"chart.json".format(music)))}
+            json.dump(chart, open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"chart.json".format(music), "w"))
             chart = chart["song"]["notes"]
         try:
-            bpm = json.load(open("assets\Musics\{0}\chart.json".format(music)))["song"]["bpm"]
+            bpm = json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"chart.json".format(music)))["song"]["bpm"]
             bpm = 240 / bpm
         except:
             bpm = 240 / 100
@@ -445,15 +446,15 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 else:
                     temp = characterNum
                 self.size = \
-                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character{0}".format(temp)][
+                json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["character{0}".format(temp)][
                     "size"]
-                self.texture = [image.load("assets\Images\Characters\{0}\left.png".format(name)).convert_alpha(),
-                                image.load("assets\Images\Characters\{0}\down.png".format(name)).convert_alpha(),
-                                image.load("assets\Images\Characters\{0}/up.png".format(name)).convert_alpha(),
-                                image.load("assets\Images\Characters\{0}/right.png".format(name)).convert_alpha(),
-                                image.load("assets\Images\Characters\{0}\static.png".format(name)).convert_alpha()]
+                self.texture = [image.load("assets"+os.path.sep+"Images"+os.path.sep+"Characters"+os.path.sep+"{0}"+os.path.sep+"left.png".format(name)).convert_alpha(),
+                                image.load("assets"+os.path.sep+"Images"+os.path.sep+"Characters"+os.path.sep+"{0}"+os.path.sep+"down.png".format(name)).convert_alpha(),
+                                image.load("assets"+os.path.sep+"Images"+os.path.sep+"Characters"+os.path.sep+"{0}"+os.path.sep+"up.png".format(name)).convert_alpha(),
+                                image.load("assets"+os.path.sep+"Images"+os.path.sep+"Characters"+os.path.sep+"{0}"+os.path.sep+"right.png".format(name)).convert_alpha(),
+                                image.load("assets"+os.path.sep+"Images"+os.path.sep+"Characters"+os.path.sep+"{0}"+os.path.sep+"static.png".format(name)).convert_alpha()]
                 self.pos = \
-                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character{0}".format(temp)]["pos"]
+                json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["character{0}".format(temp)]["pos"]
                 for tab in self.pos:
                     for k in range(2):
                         if tab[k] == "centered":
@@ -495,23 +496,23 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     if playAs == "Player":
         try:
             character1 = Character(
-                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character1"]["Name"], 1)
+                json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["character1"]["Name"], 1)
         except:
             character1 = Character("None", 1)
         try:
             character2 = Character(
-                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character2"]["Name"], 2)
+                json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["character2"]["Name"], 2)
         except:
             character2 = Character("None", 2)
     else:
         try:
             character1 = Character(
-                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character2"]["Name"], 1)
+                json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["character2"]["Name"], 1)
         except:
             character1 = Character("None", 1)
         try:
             character2 = Character(
-                json.load(open("assets\Musics\{0}\songData.json".format(musicName)))["character1"]["Name"], 2)
+                json.load(open("assets"+os.path.sep+"Musics"+os.path.sep+"{0}"+os.path.sep+"songData.json".format(musicName)))["character1"]["Name"], 2)
         except:
             character2 = Character("None", 2)
 
