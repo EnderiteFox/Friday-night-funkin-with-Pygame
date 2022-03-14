@@ -4,6 +4,7 @@ from random import *
 import time as Time
 import cProfile
 import sys
+import os
 from Game import Main_game
 
 init()
@@ -12,9 +13,9 @@ screen = display.set_mode((0, 0), FULLSCREEN)
 middleScreen = (display.Info().current_w // 2, display.Info().current_h // 2)
 
 if not display.Info().current_w / display.Info().current_h == 1920 / 1080:
-    menuBG = transform.scale(image.load("assets\Images\menuBG.png"), (1920, 1080))
+    menuBG = transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"menuBG.png"), (1920, 1080))
 else:
-    menuBG = transform.scale(image.load("assets\Images\menuBG.png"),
+    menuBG = transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"menuBG.png"),
                              (display.Info().current_w, display.Info().current_h))
 
 BGrect = menuBG.get_rect()
@@ -22,15 +23,15 @@ BGrect.center = (middleScreen[0], middleScreen[1])
 
 mouse.set_visible(False)
 
-musicList = json.load(open("assets\MusicList.json"))["musics"]
-availableNoteStyles = json.load(open("assets/NoteStyles.json"))["NoteStyles"]
+musicList = json.load(open("assets"+os.path.sep+"MusicList.json"))["musics"]
+availableNoteStyles = json.load(open("assets"+os.path.sep+"NoteStyles.json"))["NoteStyles"]
 
 Font100 = font.SysFont("Comic Sans MS", 100)
 Font125 = font.SysFont("Comic Sans MS", 125)
-FNFfont = font.Font("assets\Friday Night Funkin Font.ttf", 100)
-FNFfont125 = font.Font("assets\Friday Night Funkin Font.ttf", 125)
+FNFfont = font.Font("assets"+os.path.sep+"Friday Night Funkin Font.ttf", 100)
+FNFfont125 = font.Font("assets"+os.path.sep+"Friday Night Funkin Font.ttf", 125)
 
-options = json.load(open("assets\options.json"))
+options = json.load(open("assets"+os.path.sep+"options.json"))
 
 selectedMusic = 0
 selectedOption = 0
@@ -56,7 +57,7 @@ K_DOWN = options["keybinds"][5]
 K_UP = options["keybinds"][6]
 K_RIGHT = options["keybinds"][7]
 
-menuMusic = mixer.Sound("assets\menuMusic.ogg")
+menuMusic = mixer.Sound("assets"+os.path.sep+"menuMusic.ogg")
 
 preventDoubleEnter = False
 
