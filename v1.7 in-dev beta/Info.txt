@@ -1,0 +1,3 @@
+Yeah, this is the in-dev beta of v1.7. This is not completely finished yet, I just have to find a way to display the characters correctly, as due to the image's size changing, the character is not shown at the correct place. I'll try to use the info from the XML file to fix that
+
+Btw modcharts are delayed to v1.8
