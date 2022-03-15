@@ -10,9 +10,12 @@ More detailed:
   - Fixed a bug with the song progress bar not displaying correctly when playing in downscroll mode
   - Added idle animation
   - Characters now use a png and xml file, so now it's easier to add characters
+  - Now animations are more fluid, as they use all images from the png
   Still in developpement:
-  - Animation rework (XML file reading done)
-  - Some modded things (modcharts)
+  - Showing characters to the correct place using the XML file, without having to change coordinates manually
+  
+v1.8:
+- Modcharts
 
 Future things with no defined update:
   - Adding all animated backgrounds
