@@ -478,7 +478,6 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
         characterImage = image.load("assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(characterName) + os.path.sep + "character.png").convert_alpha()
         XMLfile = ET.parse(XMLpath).getroot()
         result = [[] for k in range(5)]
-        offset = [[] for k in range(5)]
         for data in XMLfile:
             name = data.attrib["name"]
             tempResult = ""
@@ -524,39 +523,15 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
         for data in XMLfile:
             if getNfirstCharacters(data.attrib["name"], 9) == "NOTE LEFT" and len(data.attrib["name"]) == 13:
                 result[0].append(characterImage.subsurface(getAttibuteRect(data)))
-                try:
-                    offset[0].append([data.attrib["frameX"], data.attrib["frameY"]])
-                except:
-                    offset[0].append([0, 0])
             if getNfirstCharacters(data.attrib["name"], 9) == "NOTE DOWN" and len(data.attrib["name"]) == 13:
                 result[1].append(characterImage.subsurface(getAttibuteRect(data)))
-                try:
-                    offset[1].append([data.attrib["frameX"], data.attrib["frameY"]])
-                except:
-                    offset[1].append([0, 0])
             if getNfirstCharacters(data.attrib["name"], 7) == "NOTE UP" and len(data.attrib["name"]) == 11:
                 result[2].append(characterImage.subsurface(getAttibuteRect(data)))
-                try:
-                    offset[2].append([data.attrib["frameX"], data.attrib["frameY"]])
-                except:
-                    offset[2].append([0, 0])
             if getNfirstCharacters(data.attrib["name"], 10) == "NOTE RIGHT" and len(data.attrib["name"]) == 14:
                 result[3].append(characterImage.subsurface(getAttibuteRect(data)))
-                try:
-                    offset[3].append([data.attrib["frameX"], data.attrib["frameY"]])
-                except:
-                    offset[3].append([0, 0])
             if getNfirstCharacters(data.attrib["name"], 10) == "idle dance" and len(data.attrib["name"]) == 14:
                 result[4].append(characterImage.subsurface(getAttibuteRect(data)))
-                try:
-                    offset[4].append([data.attrib["frameX"], data.attrib["frameY"]])
-                except:
-                    offset[4].append([0, 0])
-        for k in range(len(offset)):
-            for x in range(len(offset[k])):
-                offset[k][x][0] = int(offset[k][x][0])
-                offset[k][x][1] = int(offset[k][x][1])
-        return result, offset
+        return result
 
     class Character:
         def __init__(self, name, characterNum):
@@ -568,19 +543,30 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                         temp = 1
                 else:
                     temp = characterNum
+                # Load size and texture
                 self.size = \
                     json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
                         "size"]
-                temp1 = getXmlData(name)
-                self.texture = temp1[0]
-                self.offset = temp1[1]
-                for k in range(5):
+                # Parse XML file and get texture based on XML indications
+                self.texture = getXmlData(name)
+                # Get offset
+                try:
+                    self.offset = json.load(open("assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(name) + os.path.sep + "offset.json"))["offset"]
+                except:
+                    self.offset = [[] for k in range(5)]
+                    for k in range(5):
+                        for x in range(len(self.texture[k])):
+                            self.offset[k].append([0, 0])
+                # Multiply offset by size
+                for k in range(len(self.offset)):
                     for x in range(len(self.offset[k])):
                         self.offset[k][x][0] *= self.size[k][0]
                         self.offset[k][x][1] *= self.size[k][1]
+                # Get pos
                 self.pos = \
                     json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
                         "pos"]
+                # Handle centered character
                 try:
                     self.isCentered = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["isCentered"]
                 except:
@@ -592,25 +578,34 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                     else:
                         self.pos[0] = display.Info().current_w / 2 - self.pos[0]
                         self.pos[1] = display.info().current_h / 2 + self.pos[1]
-                for k in range(5):
-                    for x in range(len(self.offset[k])):
-                        if characterNum == 1:
-                            self.offset[k][x][0] = self.pos[0] + self.offset[k][x][0]
-                            self.offset[k][x][1] = self.pos[1] + self.offset[k][x][1]
-                        else:
-                            self.offset[k][x][0] = self.pos[0] - self.offset[k][x][0]
-                            self.offset[k][x][1] = self.pos[1] + self.offset[k][x][1]
-                self.pos = self.offset
-                for k in range(5):
-                    for x in range(len(self.texture[k])):
-                        self.texture[k][x] = transform.scale(self.texture[k][x], (
-                            int(self.texture[k][x].get_width() * self.size[k][0]),
-                            int(self.texture[k][x].get_height() * self.size[k][1])))
+                # Get dontFlip value (used for the BF texture so it isn't flipped when on the right side
                 try:
                     dontFlip = json.load(open("assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(name) + os.path.sep + "characterData.json"))[
                         "dont_flip"]
                 except:
                     dontFlip = "False"
+                # Invert offset when texture is not flipped? (idk why but it works)
+                if not (characterNum == 2 and dontFlip == "False") or (characterNum == 1 and dontFlip == "True"):
+                    for k in range(5):
+                        for x in range(len(self.offset[k])):
+                            self.offset[k][x][0] *= -1
+                # Add offset to pos
+                for k in range(5):
+                    for x in range(len(self.offset[k])):
+                        if characterNum == 1:
+                            self.offset[k][x][0] = self.pos[0] + self.offset[k][x][0]
+                            self.offset[k][x][1] = self.pos[1] - self.offset[k][x][1]
+                        else:
+                            self.offset[k][x][0] = self.pos[0] - self.offset[k][x][0]
+                            self.offset[k][x][1] = self.pos[1] - self.offset[k][x][1]
+                self.pos = self.offset
+                # Scale texture to size
+                for k in range(5):
+                    for x in range(len(self.texture[k])):
+                        self.texture[k][x] = transform.scale(self.texture[k][x], (
+                            int(self.texture[k][x].get_width() * self.size[k][0]),
+                            int(self.texture[k][x].get_height() * self.size[k][1])))
+                # Flip texture
                 if (characterNum == 2 and dontFlip == "False") or (characterNum == 1 and dontFlip == "True"):
                     for k in range(5):
                         for x in range(len(self.texture[k])):
@@ -618,14 +613,16 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                     temp1 = self.texture[0]
                     self.texture[0] = self.texture[3]
                     self.texture[3] = temp1
-                if characterNum == 1:
+                else:
                     temp1 = self.pos[0]
                     self.pos[0] = self.pos[3]
                     self.pos[3] = temp1
+            # Handle no character
             else:
                 self.texture = [[Font40.render("", 1, (255, 255, 255))] for k in range(5)]
                 self.pos = [[[0, 0]] for k in range(5)]
 
+    # Load characters
     if playAs == "Player":
         try:
             character1 = Character(
@@ -668,8 +665,6 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     if singlePlayer:
         print("Resolution too low to display both characters, using singleplayer mode")
         character1 = Character("None", 2)
-
-    print(character2.pos[4])
 
     # endregion
     # endregion
@@ -1043,12 +1038,15 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
 
     def drawCharacters():
         currentTime = Time.time() - startTime
+        #   Character 1
+        # Idle animation
         if currentTime - opponentAnimation[1] >= 0.75:
             animationFrame = int((((Time.time() - startTime) * 1000 / 2) % bpm) / bpm * len(character1.texture[4]))
             temp = character1.texture[4][animationFrame].get_rect()
-            temp.center = [character1.pos[4][animationFrame][0],
+            temp.midbottom = [character1.pos[4][animationFrame][0],
                               display.Info().current_h - character1.pos[4][animationFrame][1]]
             screen.blit(character1.texture[4][animationFrame], temp)
+        # Directional animation
         else:
             animationDirection = ["Left", "Down", "Up", "Right"].index(opponentAnimation[0])
             if currentTime - opponentAnimation[1] < 0.45:
@@ -1057,15 +1055,18 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 numFrame = len(character1.texture[animationDirection]) - 1
             temp = character1.texture[animationDirection][numFrame].get_rect()
-            temp.center = [character1.pos[animationDirection][numFrame][0],
+            temp.midbottom = [character1.pos[animationDirection][numFrame][0],
                               display.Info().current_h - character1.pos[animationDirection][numFrame][1]]
             screen.blit(character1.texture[animationDirection][numFrame], temp)
+        #   Character 2
+        # Idle animation
         if currentTime - playerAnimation[1] >= 0.75:
             animationFrame = int((((Time.time() - startTime) * 1000 / 2) % bpm) / bpm * len(character2.texture[4]))
             temp = character2.texture[4][animationFrame].get_rect()
-            temp.center = [display.Info().current_w - character2.pos[4][animationFrame][0],
+            temp.midbottom = [display.Info().current_w - character2.pos[4][animationFrame][0],
                               display.Info().current_h - character2.pos[4][animationFrame][1]]
             screen.blit(character2.texture[4][animationFrame], temp)
+        # Directional animation
         else:
             animationDirection = ["Left", "Down", "Up", "Right"].index(playerAnimation[0])
             if currentTime - playerAnimation[1] < 0.45:
@@ -1074,7 +1075,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 numFrame = len(character2.texture[animationDirection]) - 1
             temp = character2.texture[animationDirection][numFrame].get_rect()
-            temp.center = [display.Info().current_w - character2.pos[animationDirection][numFrame][0],
+            temp.midbottom = [display.Info().current_w - character2.pos[animationDirection][numFrame][0],
                               display.Info().current_h - character2.pos[animationDirection][numFrame][1]]
             screen.blit(character2.texture[animationDirection][numFrame], temp)
 
