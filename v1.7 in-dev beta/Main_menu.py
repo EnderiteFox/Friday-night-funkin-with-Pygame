@@ -1,11 +1,10 @@
-﻿from pygame import *
+from pygame import *
 import json
 from random import *
 import time as Time
 import cProfile
 import sys
 from Game import Main_game
-from xml.dom import minidom
 import os
 
 init()
@@ -16,7 +15,7 @@ middleScreen = (display.Info().current_w // 2, display.Info().current_h // 2)
 if not display.Info().current_w / display.Info().current_h == 1920 / 1080:
     menuBG = transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "menuBG.png"), (1920, 1080))
 else:
-    menuBG = transform.scale(image.load("assets" + os.path.sep + "Images\menuBG.png"),
+    menuBG = transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "menuBG.png"),
                              (display.Info().current_w, display.Info().current_h))
 
 BGrect = menuBG.get_rect()
