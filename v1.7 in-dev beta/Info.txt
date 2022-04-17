@@ -1,3 +1,5 @@
-Yeah, this is the in-dev beta of v1.7. This is not completely finished yet, I just have to find a way to display the characters correctly, as due to the image's size changing, the character is not shown at the correct place. I'll try to use the info from the XML file to fix that
+I'm still trying to figure out how to display characters correctly. I managed to display the BF side character correctly, but this is still not working with the opponent
+
+I think the dontFlip data has something to do with that
 
 Btw modcharts are delayed to v1.8
