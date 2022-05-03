@@ -11,8 +11,9 @@ More detailed:
   - Added idle animation
   - Characters now use a png and xml file, so now it's easier to add characters
   - Now animations are more fluid, as they use all images from the png
-  Still in developpement:
-  - Showing characters to the correct place using the XML file, without having to change coordinates manually
+  - Showing characters to the correct place using the XML file, without having to change coordinates manually (finally I figured it out!)
+  Not done yet:
+  - Editing the offsets of all characters using the offset editor (pain)
   
 v1.8:
 - Modcharts
