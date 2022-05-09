@@ -20,7 +20,7 @@ combo = 0
 bpm = 60000 / 100
 
 
-def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscroll, debugMode):
+def Main_game(musicName, options):
     global Inst
     global Vocals
     global chart
@@ -29,7 +29,6 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     global BG
     global opponentAnimation
     global playerAnimation
-    global options
     global hasPlayedMicDrop
     global combo
     global bpm
@@ -39,14 +38,14 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
 
     init()
 
-    K_a = keybinds[0]
-    K_s = keybinds[1]
-    K_w = keybinds[2]
-    K_d = keybinds[3]
-    K_LEFT = keybinds[4]
-    K_DOWN = keybinds[5]
-    K_UP = keybinds[6]
-    K_RIGHT = keybinds[7]
+    K_a = options.keybinds[0]
+    K_s = options.keybinds[1]
+    K_w = options.keybinds[2]
+    K_d = options.keybinds[3]
+    K_LEFT = options.keybinds[4]
+    K_DOWN = options.keybinds[5]
+    K_UP = options.keybinds[6]
+    K_RIGHT = options.keybinds[7]
 
     # region loading
     # region screen and loading screen
@@ -54,7 +53,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     mouse.set_visible(False)
     middleScreen = (display.Info().current_w // 2, display.Info().current_h // 2)
 
-    def loadingscreen(progress):
+    def loadingscreen(progress, maxProgress, description = None):
         screen.fill((0, 0, 0))
         temp = font.SysFont("Comic Sans MS", 100).render("Loading...", 1, (255, 255, 255))
         temp1 = temp.get_rect()
@@ -69,12 +68,17 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
         draw.line(screen, (255, 255, 255), (display.Info().current_w - 95, display.Info().current_h - 95),
                   (display.Info().current_w - 95, display.Info().current_h - 155), 3)
         if progress > 0:
-            temp = (display.Info().current_w - 200) / 4
+            temp = (display.Info().current_w - 200) / maxProgress
             draw.rect(screen, (255, 255, 255), Rect(100, display.Info().current_h - 150, temp * progress, 50))
+        if description is not None:
+            temp = font.SysFont("Comic Sans MS", 30).render(description, 1, (255, 255, 255))
+            temp1 = temp.get_rect()
+            temp1.midtop = (middleScreen[0], display.Info().current_h - 85)
+            screen.blit(temp, temp1)
 
         display.flip()
 
-    loadingscreen(0)
+    loadingscreen(0, 5, "Loading variables")
     # endregion
 
     # region variables
@@ -116,33 +120,35 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
 
     # region images loading
     # region load images
+    loadingscreen(1, 5, "Loading textures")
+
     arrowsSkins = [
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Arrows" + os.path.sep + "left.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "left.png").convert_alpha(),
             (150, 150)),
-        transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Arrows" + os.path.sep + "down.png").convert_alpha(),
+        transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "down.png").convert_alpha(),
                         (150, 150)),
-        transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Arrows" + os.path.sep + "up.png").convert_alpha(),
+        transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "up.png").convert_alpha(),
                         (150, 150)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Arrows" + os.path.sep + "right.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "right.png").convert_alpha(),
             (150, 150))]
 
     pressedArrowsSkins = [
         transform.scale(
             image.load(
-                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "left.png").convert_alpha(),
+                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "left.png").convert_alpha(),
             (150, 150)),
         transform.scale(
             image.load(
-                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "down.png").convert_alpha(),
+                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "down.png").convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "up.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "up.png").convert_alpha(),
             (150, 150)),
         transform.scale(
             image.load(
-                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "right.png").convert_alpha(),
+                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "right.png").convert_alpha(),
             (150, 150))]
 
     accuracyIndicatorImages = [
@@ -153,51 +159,51 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
 
     greyArrow = [
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "left.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "left.png").convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "down.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "down.png").convert_alpha(),
             (150, 150)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "up.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "up.png").convert_alpha(),
             (150, 150)),
         transform.scale(image.load(
-            "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "right.png").convert_alpha(),
+            "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "right.png").convert_alpha(),
                         (150, 150))]
 
     longNotesImg = [
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "left.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "left.png").convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "down.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "down.png").convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "up.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "up.png").convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "right.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "right.png").convert_alpha(),
             (52, 46))]
 
-    if downscroll:
+    if options.downscroll:
         for k in range(len(longNotesImg)):
             longNotesImg[k] = transform.flip(longNotesImg[k], False, True)
 
     longNotesEnd = [
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "left.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "left.png").convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "down.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "down.png").convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "up.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "up.png").convert_alpha(),
             (52, 46)),
         transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(arrowSkinID) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "right.png").convert_alpha(),
+            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(options.availableNoteStyles[options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "right.png").convert_alpha(),
             (52, 46))]
 
-    if downscroll:
+    if options.downscroll:
         for k in range(len(longNotesEnd)):
             longNotesEnd[k] = transform.flip(longNotesEnd[k], False, True)
 
@@ -242,9 +248,9 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     deathScreenRect.midbottom = (middleScreen[0], display.Info().current_h - 50)
     # endregion
 
-    musicList = json.load(open("assets/MusicList.json"))["musics"]
+    musicList = json.load(open("assets" + os.path.sep + "MusicList.json"))["musics"]
 
-    loadingscreen(1)
+    loadingscreen(2, 5, "Loading musics")
 
     # endregion
 
@@ -272,7 +278,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             bpm = 60000 / bpm
         except error as e:
             print("No BPM detected, using 100 bpm")
-            if debugMode:
+            if options.debugMode:
                 print("Debug mode stopped the program, printing error:")
                 print(e)
             bpm = 60000 / 100
@@ -292,11 +298,10 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     else:
         musicLen = temp2
 
-    loadingscreen(2)
-
     # endregion
 
     # region chart managment
+    loadingscreen(3, 5, "Loading chart")
     class Note:
         def __init__(self, pos, column, side, length, noteId):
             self.pos = pos
@@ -363,7 +368,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     #           6 = player up
     #           7 = player right
 
-    if playAs == "Player":
+    if options.playAs == "Player":
         tempPlayAs = ["Player", "Opponent"]
     else:
         tempPlayAs = ["Opponent", "Player"]
@@ -433,8 +438,9 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     for k in range(temp):
         notesChart.remove(None)
 
-    longNotesLen = 42 // speed
+    longNotesLen = 42 // options.selectedSpeed
     for note in notesChart:
+
         if note.length >= longNotesLen > 0 and int(round(note.length // longNotesLen)):
             tempGroup = LongNoteGroup(note.id)
             for k in range(1, int(round(note.length // longNotesLen))):
@@ -448,12 +454,11 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     for element in longNotesChart:
         element.notes.sort(key=lambda s: s.pos)
 
-    loadingscreen(3)
-
     # endregion
     # endregion
 
     # region characters
+    loadingscreen(4, 5, "Loading characters")
     def getAttibuteRect(data):
         return Rect(float(data.attrib["x"]), float(data.attrib["y"]), float(data.attrib["width"]),
                     float(data.attrib["height"]))
@@ -536,7 +541,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     class Character:
         def __init__(self, name, characterNum):
             if name != "None":
-                if playAs == "Opponent":
+                if options.playAs == "Opponent":
                     if characterNum == 1:
                         temp = 2
                     else:
@@ -557,6 +562,10 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                     for k in range(5):
                         for x in range(len(self.texture[k])):
                             self.offset[k].append([0, 0])
+                try:
+                    textureDirection = json.load(open("assets" + os.path.sep + "Images" + os.path.sep + "characters" + os.path.sep + "{0}".format(name) + os.path.sep + "characterData.json"))["texture_direction"]
+                except:
+                    textureDirection = "Right"
                 # Multiply offset by size
                 for k in range(len(self.offset)):
                     for x in range(len(self.offset[k])):
@@ -578,17 +587,26 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                     else:
                         self.pos[0] = display.Info().current_w / 2 - self.pos[0]
                         self.pos[1] = display.info().current_h / 2 + self.pos[1]
-                # Get dontFlip value (used for the BF texture so it isn't flipped when on the right side
+                # Get dontFlip value (used for the BF texture, so the texture isn't flipped if it is already flipped in the texture)
                 try:
                     dontFlip = json.load(open("assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(name) + os.path.sep + "characterData.json"))[
                         "dont_flip"]
                 except:
                     dontFlip = "False"
-                # Invert offset when texture is not flipped? (idk why but it works)
-                if not (characterNum == 2 and dontFlip == "False") or (characterNum == 1 and dontFlip == "True"):
+                # Invert texture and offset when necessary
+                if (textureDirection == "Left" and characterNum == 1) or (textureDirection == "Right" and characterNum == 2):
                     for k in range(5):
                         for x in range(len(self.offset[k])):
                             self.offset[k][x][0] *= -1
+                    for k in range(5):
+                        for x in range(len(self.texture[k])):
+                            self.texture[k][x] = transform.flip(self.texture[k][x], True, False)
+                    temp1 = self.texture[0]
+                    self.texture[0] = self.texture[3]
+                    self.texture[3] = temp1
+                    temp1 = self.offset[0]
+                    self.offset[0] = self.offset[3]
+                    self.offset[3] = temp1
                 # Add offset to pos
                 for k in range(5):
                     for x in range(len(self.offset[k])):
@@ -605,31 +623,19 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                         self.texture[k][x] = transform.scale(self.texture[k][x], (
                             int(self.texture[k][x].get_width() * self.size[k][0]),
                             int(self.texture[k][x].get_height() * self.size[k][1])))
-                # Flip texture
-                if (characterNum == 2 and dontFlip == "False") or (characterNum == 1 and dontFlip == "True"):
-                    for k in range(5):
-                        for x in range(len(self.texture[k])):
-                            self.texture[k][x] = transform.flip(self.texture[k][x], True, False)
-                    temp1 = self.texture[0]
-                    self.texture[0] = self.texture[3]
-                    self.texture[3] = temp1
-                else:
-                    temp1 = self.pos[0]
-                    self.pos[0] = self.pos[3]
-                    self.pos[3] = temp1
             # Handle no character
             else:
                 self.texture = [[Font40.render("", 1, (255, 255, 255))] for k in range(5)]
                 self.pos = [[[0, 0]] for k in range(5)]
 
     # Load characters
-    if playAs == "Player":
+    if options.playAs == "Player":
         try:
             character1 = Character(
                 json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["Name"], 1)
         except error as e:
             print("Opponent character loading failed, skipping loading")
-            if debugMode:
+            if options.debugMode:
                 print("Debug mode stopped the program, printing error:")
                 print(e)
             character1 = Character("None", 1)
@@ -638,7 +644,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character2"]["Name"], 2)
         except error as e:
             print("Player character loading failed, skipping loading")
-            if debugMode:
+            if options.debugMode:
                 print("Debug mode stopped the program, printing error:")
                 print(e)
             character2 = Character("None", 2)
@@ -648,7 +654,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character2"]["Name"], 1)
         except error as e:
             print("Opponent character loading failed, skipping loading")
-            if debugMode:
+            if options.debugMode:
                 print("Debug mode stopped the program, printing error:")
                 print(e)
             character1 = Character("None", 1)
@@ -657,7 +663,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["Name"], 2)
         except error as e:
             print("Player character loading failed, skipping loading")
-            if debugMode:
+            if options.debugMode:
                 print("Debug mode stopped the program, printing error:")
                 print(e)
             character2 = Character("None", 2)
@@ -670,13 +676,14 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
     # endregion
 
     # region screen and notes update
+    loadingscreen(5, 5, "Finishing...")
     def drawGreyNotes():
         width = display.Info().current_w
         height = display.Info().current_h
         currentTime = Time.time() - startTime
         if "hideNotes2" not in modifications:
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topright = (width - 540, 50)
             else:
                 temp.bottomright = (width - 540, height - 50)
@@ -685,7 +692,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 screen.blit(greyArrow[0], temp)
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topright = (width - 380, 50)
             else:
                 temp.bottomright = (width - 380, height - 50)
@@ -694,7 +701,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 screen.blit(greyArrow[1], temp)
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topright = (width - 220, 50)
             else:
                 temp.bottomright = (width - 220, height - 50)
@@ -703,7 +710,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 screen.blit(greyArrow[2], temp)
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topright = (width - 60, 50)
             else:
                 temp.bottomright = (width - 60, height - 50)
@@ -713,7 +720,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 screen.blit(greyArrow[3], temp)
         if not singlePlayer and "hideNotes1" not in modifications:
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topleft = (60, 50)
             else:
                 temp.bottomleft = (60, height - 50)
@@ -722,7 +729,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 screen.blit(pressedArrowsSkins[0], temp)
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topleft = (220, 50)
             else:
                 temp.bottomleft = (220, height - 50)
@@ -731,7 +738,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 screen.blit(pressedArrowsSkins[1], temp)
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topleft = (380, 50)
             else:
                 temp.bottomleft = (380, height - 50)
@@ -740,7 +747,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             else:
                 screen.blit(pressedArrowsSkins[2], temp)
             temp = arrowRect
-            if not downscroll:
+            if not options.downscroll:
                 temp.topleft = (540, 50)
             else:
                 temp.bottomleft = (540, height - 50)
@@ -776,64 +783,64 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                     health -= 4
                     accuracyPercentList.append(0)
                     combo = 0
-                if 50 + (note.pos - currentTime * 1000) * speed < display.Info().current_h + 100:
+                if 50 + (note.pos - currentTime * 1000) * options.selectedSpeed < display.Info().current_h + 100:
                     if not singlePlayer and "hideNotes1" not in modifications:
                         if note.side == "Opponent" and note.column == "Down":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topleft = (220, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topleft = (220, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (220, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomleft = (220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[1], temp)
                         elif note.side == "Opponent" and note.column == "Left":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topleft = (60, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topleft = (60, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (60, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomleft = (60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[0], temp)
                         elif note.side == "Opponent" and note.column == "Up":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topleft = (380, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topleft = (380, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (380, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomleft = (380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[2], temp)
                         elif note.side == "Opponent" and note.column == "Right":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topleft = (540, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topleft = (540, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (540, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomleft = (540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[3], temp)
                     if "hideNotes2" not in modifications:
                         if note.side == "Player" and note.column == "Down":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topright = (width - 380, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topright = (width - 380, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (width - 380, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomright = (width - 380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[1], temp)
                         elif note.side == "Player" and note.column == "Left":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topright = (width - 540, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topright = (width - 540, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (width - 540, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomright = (width - 540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[0], temp)
                         elif note.side == "Player" and note.column == "Up":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topright = (width - 220, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topright = (width - 220, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (width - 220, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomright = (width - 220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[2], temp)
                         elif note.side == "Player" and note.column == "Right":
                             temp = arrowRect
-                            if not downscroll:
-                                temp.topright = (width - 60, 50 + (note.pos - currentTime * 1000) * speed)
+                            if not options.downscroll:
+                                temp.topright = (width - 60, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (width - 60, height - 50 - (note.pos - currentTime * 1000) * speed)
+                                temp.bottomright = (width - 60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[3], temp)
 
                 else:
@@ -855,7 +862,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             if len(noteGroup.notes) == 0:
                 run = False
                 deleteGroup = True
-            if run and 50 + (noteGroup.notes[0].pos - currentTime * 1000) * speed < height + 100:
+            if run and 50 + (noteGroup.notes[0].pos - currentTime * 1000) * options.selectedSpeed < height + 100:
                 for longNote in noteGroup.notes:
                     transparent = False
                     if currentTime * 1000 - 133 >= longNote.pos:
@@ -891,51 +898,51 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                                 if currentTime - playerAnimation[1] > 0.7:
                                     playerAnimation = [longNote.column, currentTime]
                                 noteGroup.notes.remove(longNote)
-                        if 50 + (longNote.pos - currentTime * 1000) * speed < height + 100:
+                        if 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed < height + 100:
                             if not singlePlayer and longNote.side == "Opponent" and "hideNotes1" not in modifications:
                                 if longNote.column == "Down":
                                     temp = arrowRect
-                                    if not downscroll:
+                                    if not options.downscroll:
                                         temp.center = (
-                                            220 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                            220 + 125, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            220 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            220 + 125, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         screen.blit(longNotesEnd[1], temp)
                                     else:
                                         screen.blit(longNotesImg[1], temp)
                                 if longNote.column == "Left":
                                     temp = arrowRect
-                                    if not downscroll:
-                                        temp.center = (60 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                    if not options.downscroll:
+                                        temp.center = (60 + 125, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            60 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            60 + 125, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         screen.blit(longNotesEnd[0], temp)
                                     else:
                                         screen.blit(longNotesImg[0], temp)
                                 if longNote.column == "Up":
                                     temp = arrowRect
-                                    if not downscroll:
+                                    if not options.downscroll:
                                         temp.center = (
-                                            380 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                            380 + 125, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            380 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            380 + 125, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         screen.blit(longNotesEnd[2], temp)
                                     else:
                                         screen.blit(longNotesImg[2], temp)
                                 if longNote.column == "Right":
                                     temp = arrowRect
-                                    if not downscroll:
+                                    if not options.downscroll:
                                         temp.center = (
-                                            540 + 125, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                            540 + 125, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            540 + 125, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            540 + 125, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         screen.blit(longNotesEnd[3], temp)
                                     else:
@@ -943,12 +950,12 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                             if longNote.side == "Player" and "hideNotes2" not in modifications:
                                 if longNote.column == "Up":
                                     temp = arrowRect
-                                    if not downscroll:
+                                    if not options.downscroll:
                                         temp.center = (
-                                            width - 220 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                            width - 220 - 25, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            width - 220 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            width - 220 - 25, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         img = copy.copy(longNotesEnd[2])
                                     else:
@@ -958,12 +965,12 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                                     screen.blit(img, temp)
                                 if longNote.column == "Down":
                                     temp = arrowRect
-                                    if not downscroll:
+                                    if not options.downscroll:
                                         temp.center = (
-                                            width - 380 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                            width - 380 - 25, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            width - 380 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            width - 380 - 25, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         img = copy.copy(longNotesEnd[1])
                                     else:
@@ -973,12 +980,12 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                                     screen.blit(img, temp)
                                 if longNote.column == "Left":
                                     temp = arrowRect
-                                    if not downscroll:
+                                    if not options.downscroll:
                                         temp.center = (
-                                            width - 540 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                            width - 540 - 25, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            width - 540 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            width - 540 - 25, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         img = copy.copy(longNotesEnd[0])
                                     else:
@@ -988,12 +995,12 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                                     screen.blit(img, temp)
                                 if longNote.column == "Right":
                                     temp = arrowRect
-                                    if not downscroll:
+                                    if not options.downscroll:
                                         temp.center = (
-                                            width - 60 - 25, 50 + (longNote.pos - currentTime * 1000) * speed + 100)
+                                            width - 60 - 25, 50 + (longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
-                                            width - 60 - 25, height - 50 - (longNote.pos - currentTime * 1000) * speed)
+                                            width - 60 - 25, height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
                                         img = copy.copy(longNotesEnd[3])
                                     else:
@@ -1018,17 +1025,17 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             health = 0
         width = display.Info().current_w
         height = display.Info().current_h
-        if not downscroll:
+        if not options.downscroll:
             draw.rect(screen, (255, 255, 255), Rect(45, height - 115, width - 90, 60))
         else:
             draw.rect(screen, (255, 255, 255), Rect(45, 55, width - 90, 60))
         if health < 100:
-            if not downscroll:
+            if not options.downscroll:
                 draw.rect(screen, (255, 0, 0), Rect(50, height - 110, (width - 100) / 100 * (100 - health), 50))
             else:
                 draw.rect(screen, (255, 0, 0), Rect(50, 60, (width - 100) / 100 * (100 - health), 50))
         if health > 0:
-            if not downscroll:
+            if not options.downscroll:
                 draw.rect(screen, (0, 255, 0),
                           Rect(50 + (width - 100) / 100 * (100 - health), height - 110, (width - 100) / 100 * health,
                                50))
@@ -1117,14 +1124,14 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
         currentTime = Time.time() - startTime
         width = display.Info().current_w
         height = display.Info().current_h
-        if not downscroll:
+        if not options.downscroll:
             draw.rect(screen, (255, 255, 255), Rect(400, 5, width - 800, 40))
             draw.rect(screen, (0, 0, 0), Rect(402, 7, width - 804, 36))
         else:
             draw.rect(screen, (255, 255, 255), Rect(400, height - 5 - 40, width - 800, 40))
             draw.rect(screen, (0, 0, 0), Rect(402, height - 7 - 36, width - 804, 36))
         temp = int(round(musicLen - (Time.time() - startTime), 0))
-        if not downscroll:
+        if not options.downscroll:
             draw.rect(screen, (170, 170, 170), Rect(405, 10, (width - 810) / musicLen * currentTime, 30))
         else:
             draw.rect(screen, (170, 170, 170), Rect(405, height - 10 - 30, (width - 810) / musicLen * currentTime, 30))
@@ -1136,13 +1143,11 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             temp1 = ""
         temp = Font25.render("{0}  {1}:{2}{3}".format(musicName, tempMinutes, temp1, tempSeconds), 1, (255, 255, 255))
         temp1 = temp.get_rect()
-        if not downscroll:
+        if not options.downscroll:
             temp1.midtop = (middleScreen[0], 5)
         else:
             temp1.midbottom = (middleScreen[0], height - 10)
         screen.blit(temp, temp1)
-
-    loadingscreen(4)
     # endregion
 
     keyPressed = []
@@ -1245,14 +1250,42 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
                 temp += element
             temp /= len(accuracyPercentList)
             tempAccuracy = "{0}%".format(round(temp * 100, 2))
-        temp = Font40.render("Combo: {0} | Misses: {1} | Accuracy: {2}".format(combo, misses, tempAccuracy), 1,
-                             (255, 255, 255))
-        temp1 = temp.get_rect()
-        if not downscroll:
+        text1 = "Combo: {0} | Misses: {1} | ".format(combo, misses)
+        text2 = "Accuracy: {0}".format(tempAccuracy)
+        biggest_height = 0
+        tmp_width = 0
+        tempText1 = text1 + text2
+        for k in range(len(tempText1)):
+            tmp = Font40.render(tempText1[k], 1, (255, 255, 255)).get_rect()
+            if tmp.height > biggest_height:
+                biggest_height = tmp.height
+            tmp_width += tmp.width
+        tempText = Surface((tmp_width, biggest_height), flags=SRCALPHA)
+        tempText = tempText.convert_alpha()
+        tempText.fill((0, 0, 0, 0))
+        current_x = 0
+        for k in range(len(text1)):
+            tempLetter = Font40.render(text1[k], 1, (255, 255, 255))
+            tempText.blit(tempLetter, (current_x, 0))
+            current_x += tempLetter.get_rect().width
+        if len(accuracyPercentList) == 0:
+            tempColor = (255, 255, 255)
+        elif round(temp * 100, 2) >= 85:
+            tempColor = (0, 255, 0)
+        elif 85 >= round(temp * 100, 2) > 70:
+            tempColor = (210, 139, 0)
+        else:
+            tempColor = (255, 0, 0)
+        for k in range(len(text2)):
+            tempLetter = Font40.render(text2[k], 1, tempColor)
+            tempText.blit(tempLetter, (current_x, 0))
+            current_x += tempLetter.get_rect().width
+        temp1 = tempText.get_rect()
+        if not options.downscroll:
             temp1.midbottom = (middleScreen[0], display.Info().current_h - 5)
         else:
             temp1.midtop = (middleScreen[0], 0)
-        screen.blit(temp, temp1)
+        screen.blit(tempText, temp1)
         # endregion
         # region accuracy display
         if Time.time() - accuracyDisplayTime > 0.5:
@@ -1285,7 +1318,7 @@ def Main_game(musicName, speed, playAs, noDying, arrowSkinID, keybinds, downscro
             Inst.stop()
             Vocals.stop()
             return False
-        if health <= 0 and not noDying:
+        if health <= 0 and not options.noDying:
             Inst.stop()
             Vocals.stop()
             return death()
