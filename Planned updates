@@ -11,7 +11,11 @@ More detailed:
   - Added idle animation
   - Characters now use a png and xml file, so now it's easier to add characters
   - Now animations are more fluid, as they use all images from the png
-  - Showing characters to the correct place using the XML file, without having to change coordinates manually (finally I figured it out!)
+  - Showing characters to the correct place using the XML file, without having to change coordinates manually
+  - Adding a color indicator depending on the accuracy (0-70%: red, 70-85%: orange, 85-100%: green)
+  Work in progress:
+  - Adding the option to display health in the info bar instead of a health bar
+  - Adding the option to disable color indicators to save performance
   Not done yet:
   - Editing the offsets of all characters using the offset editor (pain)
   
