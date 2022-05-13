@@ -13,4 +13,5 @@ How to add characters:
   - add "pos" in characters ([xCoords, yCoords]): how far it is from the edge of the screen (the left for the opponent and the right for the player, how far it is from the bottom of the screen) in []
   - For "size": the first element is for the left animation (right for the opponent), the 2nd is for down, the 3rd is for up, the 4th is for right (left for the opponent) and the 5th is for the idle animation
   - Use the offset editor to edit the offset, to make sure the character is displaying in the correct position during animations
+  - It is recommended to use the same size in the offset editor as the size used in the game to prevent differences
 - Your character should now appear in the song! This is the most complicated thing to mod, you can take a look in the other characters to know how it should look like
