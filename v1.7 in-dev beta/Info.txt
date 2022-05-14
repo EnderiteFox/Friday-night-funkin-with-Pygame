@@ -1,5 +1,0 @@
-I'm still trying to figure out how to display characters correctly. I managed to display the BF side character correctly, but this is still not working with the opponent
-
-I think the dontFlip data has something to do with that
-
-Btw modcharts are delayed to v1.8
