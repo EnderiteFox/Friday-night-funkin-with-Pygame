@@ -1,24 +1,4 @@
 Planned things for future updates:
-
-v1.7:
-- Characters animations rework (with multiple frames for each animation, so animated animations I guess)
-More detailed:
-  Done:
-  - Fixed characters not appearing on certain conditions (I think Python >=3.9 and EduPython)
-  - Improved display for screen with a resolution inferior to 1080p
-  - Fixed some maths, now animated backgrounds will display correctly, with their speed changed according to the bpm (faster bpm = faster animation)
-  - Fixed a bug with the song progress bar not displaying correctly when playing in downscroll mode
-  - Added idle animation
-  - Characters now use a png and xml file, so now it's easier to add characters
-  - Now animations are more fluid, as they use all images from the png
-  - Added the offset editor, a seperate program (accessible from the options menu), is used to change the offsets of characters, to display them at the correct position
-  - Added a color indicator depending on the accuracy (0-70%: red, 70-85%: orange, 85-100%: green)
-  - Added the option to disable info bar color indicators to save performance
-  - Added the option to display health in the info bar instead of a health bar
-  - Fixed a bug with the vertical offset being inverted
-  - Changed the menu music (changed to the main menu music from the FNF indie cross mod)
-  Not done yet:
-  - Editing the offsets of all characters using the offset editor
   
 v1.8:
 - Modcharts
@@ -32,3 +12,4 @@ Future things with no defined update:
       It is also recommended to have a great understanding of how the game is working (I will probably make video tutorials when the game is completely finished)
       It will be Python scripts executing with the song, so they will allow to make many complex things, but will be harder to make
   - Editing gameplay elements to allow them to be edited by complex modcharts
+  - Adding multiple note types
