@@ -74,4 +74,5 @@ v1.7:
  - Power outage (Funkin' at Freddy's)
  - Chartering (FF celebration mod)
  - Sussy Wussy (FF celebration mod)
+ - Hellclown is not working, this is because the character texture is saved differently, I have to find how to create textures with XML files to fix it in 1.7.1
  
