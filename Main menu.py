@@ -4,8 +4,9 @@ from random import *
 import time as Time
 import cProfile
 import sys
-import os
 from Game import Main_game
+import os
+from Offset_editor import offset_editor
 
 init()
 
@@ -13,9 +14,9 @@ screen = display.set_mode((0, 0), FULLSCREEN)
 middleScreen = (display.Info().current_w // 2, display.Info().current_h // 2)
 
 if not display.Info().current_w / display.Info().current_h == 1920 / 1080:
-    menuBG = transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"menuBG.png"), (1920, 1080))
+    menuBG = transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "menuBG.png"), (1920, 1080))
 else:
-    menuBG = transform.scale(image.load("assets"+os.path.sep+"Images"+os.path.sep+"menuBG.png"),
+    menuBG = transform.scale(image.load("assets" + os.path.sep + "Images" + os.path.sep + "menuBG.png"),
                              (display.Info().current_w, display.Info().current_h))
 
 BGrect = menuBG.get_rect()
@@ -23,15 +24,62 @@ BGrect.center = (middleScreen[0], middleScreen[1])
 
 mouse.set_visible(False)
 
-musicList = json.load(open("assets"+os.path.sep+"MusicList.json"))["musics"]
-availableNoteStyles = json.load(open("assets"+os.path.sep+"NoteStyles.json"))["NoteStyles"]
+musicList = json.load(open("assets" + os.path.sep + "MusicList.json"))["musics"]
+availableNoteStyles = json.load(open("assets" + os.path.sep + "NoteStyles.json"))["NoteStyles"]
 
 Font100 = font.SysFont("Comic Sans MS", 100)
 Font125 = font.SysFont("Comic Sans MS", 125)
-FNFfont = font.Font("assets"+os.path.sep+"Friday Night Funkin Font.ttf", 100)
-FNFfont125 = font.Font("assets"+os.path.sep+"Friday Night Funkin Font.ttf", 125)
+FNFfont = font.Font("assets" + os.path.sep + "Friday Night Funkin Font.ttf", 100)
+FNFfont125 = font.Font("assets" + os.path.sep + "Friday Night Funkin Font.ttf", 125)
 
-options = json.load(open("assets"+os.path.sep+"options.json"))
+
+class Options:
+    def __init__(self):
+        self.update()
+
+    def update(self):
+        global availableNoteStyles
+        global K_a, K_s, K_w, K_d
+        global K_LEFT, K_DOWN, K_UP, K_RIGHT
+        self.availableNoteStyles = availableNoteStyles
+        self.arguments = json.load(open("assets" + os.path.sep + "options.json"))
+        self.selectedSpeed = self.arguments["selectedSpeed"]
+        self.playAs = self.arguments["playAs"]
+        if self.arguments["selectedNoteStyle"] < len(availableNoteStyles):
+            self.selectedNoteStyle = self.arguments["selectedNoteStyle"]
+        else:
+            self.selectedNoteStyle = 0
+        self.noDying = self.arguments["noDying"] == "True"
+        self.downscroll = self.arguments["downscroll"] == "True"
+        self.debugMode = self.arguments["debug_mode"] == "True"
+        K_a = self.arguments["keybinds"][0]
+        K_s = self.arguments["keybinds"][1]
+        K_w = self.arguments["keybinds"][2]
+        K_d = self.arguments["keybinds"][3]
+        K_LEFT = self.arguments["keybinds"][4]
+        K_DOWN = self.arguments["keybinds"][5]
+        K_UP = self.arguments["keybinds"][6]
+        K_RIGHT = self.arguments["keybinds"][7]
+        self.keybinds = [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT]
+        self.healthFormat = self.arguments["health_format"]
+        self.coloredInfo = self.arguments["colored_info"] == "True"
+
+    def saveOptions(self):
+        global K_a, K_s, K_w, K_d
+        global K_LEFT, K_DOWN, K_UP, K_RIGHT
+        self.arguments["selectedSpeed"] = self.selectedSpeed
+        self.arguments["playAs"] = self.playAs
+        self.arguments["noDying"] = str(self.noDying)
+        self.arguments["debug_mode"] = str(self.debugMode)
+        self.arguments["downscroll"] = str(self.downscroll)
+        self.arguments["selectedNoteStyle"] = self.selectedNoteStyle
+        self.arguments["keybinds"] = [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT]
+        self.arguments["health_format"] = self.healthFormat
+        self.arguments["colored_info"] = str(self.coloredInfo)
+        json.dump(self.arguments, open("assets" + os.path.sep + "options.json", "w"))
+
+
+options = Options()
 
 selectedMusic = 0
 selectedOption = 0
@@ -39,25 +87,7 @@ selectedMain = 0
 selectedKeybind = 0
 currentMenu = "Main"
 
-selectedSpeed = options["selectedSpeed"]
-playAs = options["playAs"]
-if options["selectedNoteStyle"] < len(availableNoteStyles):
-    selectedNoteStyle = options["selectedNoteStyle"]
-else:
-    selectedNoteStyle = 0
-noDying = options["noDying"] == "True"
-downscroll = options["downscroll"] == "True"
-
-K_a = options["keybinds"][0]
-K_s = options["keybinds"][1]
-K_w = options["keybinds"][2]
-K_d = options["keybinds"][3]
-K_LEFT = options["keybinds"][4]
-K_DOWN = options["keybinds"][5]
-K_UP = options["keybinds"][6]
-K_RIGHT = options["keybinds"][7]
-
-menuMusic = mixer.Sound("assets"+os.path.sep+"menuMusic.ogg")
+menuMusic = mixer.Sound("assets" + os.path.sep + "menuMusic.ogg")
 
 preventDoubleEnter = False
 
@@ -74,8 +104,12 @@ def drawMusics():
 
 
 def drawOptions():
-    tempText = ["Speed: {0}".format(selectedSpeed), "Play as: {0}".format(playAs), "No dying: {0}".format(noDying),
-                "Note style: {0}".format(availableNoteStyles[selectedNoteStyle]), "Downscroll: {0}".format(downscroll), "Keybinds"]
+    tempText = ["Speed: {0}".format(options.selectedSpeed), "Play as: {0}".format(options.playAs),
+                "No dying: {0}".format(options.noDying),
+                "Note style: {0}".format(availableNoteStyles[options.selectedNoteStyle]),
+                "Downscroll: {0}".format(options.downscroll), "Debug mode: {0}".format(options.debugMode),
+                "Health: {0}".format("Health bar" if options.healthFormat == "Healthbar" else "Info bar"),
+                "Colored info bar: {0}".format(options.coloredInfo), "Keybinds", "Offset editor"]
     for k in range(len(tempText)):
         if k == selectedOption:
             temp = Font125.render(tempText[k], 1, (255, 255, 255))
@@ -135,10 +169,14 @@ def saveOptions():
         options["noDying"] = "True"
     else:
         options["noDying"] = "False"
+    if debugMode:
+        options["debug_mode"] = "True"
+    else:
+        options["debug_mode"] = "False"
     options["downscroll"] = str(downscroll)
     options["selectedNoteStyle"] = selectedNoteStyle
     options["keybinds"] = [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT]
-    json.dump(options, open("assets\options.json", "w"))
+    json.dump(options, open("assets" + os.path.sep + "options.json", "w"))
 
 
 menuMusic.play(-1)
@@ -147,7 +185,7 @@ while True:
     for events in event.get():
         if events.type == QUIT or (events.type == KEYDOWN and events.key == K_ESCAPE):
             if currentMenu == "Main":
-                saveOptions()
+                options.saveOptions()
                 quit()
                 exit()
             else:
@@ -162,6 +200,8 @@ while True:
                 menuMusic.stop()
                 restart = True
                 while restart:
+                    options.saveOptions()
+                    options.update()
                     Inst = None
                     Vocals = None
                     chart = None
@@ -172,9 +212,8 @@ while True:
                     playerAnimation = ["Up", -10]
                     hasPlayedMicDrop = False
                     combo = 0
-                    restart = Main_game(musicList[selectedMusic], selectedSpeed, playAs, noDying,
-                                        availableNoteStyles[selectedNoteStyle],
-                                        [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT], downscroll)
+                    bpm = 60000 / 100
+                    restart = Main_game(musicList[selectedMusic], options)
                 menuMusic.play(-1)
             if currentMenu == "Main":
                 if selectedMain == 0:
@@ -184,56 +223,111 @@ while True:
                     preventDoubleEnter = True
         if events.type == KEYDOWN:
             if currentMenu == "Select music":
-                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedMusic > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (
+                        events.key == 1073741906))) and selectedMusic > 0:
                     selectedMusic -= 1
-                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedMusic < len(musicList) - 1:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (
+                        events.key == 1073741905))) and selectedMusic < len(musicList) - 1:
                     selectedMusic += 1
             if currentMenu == "Options":
-                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedOption > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (
+                        events.key == 1073741906))) and selectedOption > 0:
                     selectedOption -= 1
-                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedOption < 5:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (
+                        events.key == 1073741905))) and selectedOption < 9:
                     selectedOption += 1
                 if selectedOption == 0:
-                    if (events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904))) and selectedSpeed > 0.1:
-                        selectedSpeed -= 0.1
-                        selectedSpeed = round(selectedSpeed, 1)
-                    if events.key == K_d or ((events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (events.key == 1073741903)):
-                        selectedSpeed += 0.1
-                        selectedSpeed = round(selectedSpeed, 1)
+                    if (events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904))) and options.selectedSpeed > 0.1:
+                        options.selectedSpeed -= 0.1
+                        options.selectedSpeed = round(options.selectedSpeed, 1)
+                    if events.key == K_d or (
+                            (events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (
+                            events.key == 1073741903)):
+                        options.selectedSpeed += 0.1
+                        options.selectedSpeed = round(options.selectedSpeed, 1)
                 if selectedOption == 1:
-                    if events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904)) or events.key == K_d or events.key == K_RIGHT:
-                        if playAs == "Player":
-                            playAs = "Opponent"
+                    if events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904)) or events.key == K_d or events.key == K_RIGHT:
+                        if options.playAs == "Player":
+                            options.playAs = "Opponent"
                         else:
-                            playAs = "Player"
+                            options.playAs = "Player"
                 if selectedOption == 2:
-                    if events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904)) or events.key == K_d or events.key == K_RIGHT:
-                        if noDying:
-                            noDying = False
+                    if events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904)) or events.key == K_d or events.key == K_RIGHT:
+                        if options.noDying:
+                            options.noDying = False
                         else:
-                            noDying = True
+                            options.noDying = True
                 if selectedOption == 3:
-                    if (events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904))) and selectedNoteStyle > 0:
-                        selectedNoteStyle -= 1
-                    if (events.key == K_d or ((events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (events.key == 1073741903))) and selectedNoteStyle < len(
+                    if (events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904))) and options.selectedNoteStyle > 0:
+                        options.selectedNoteStyle -= 1
+                    if (events.key == K_d or (
+                            (events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (
+                            events.key == 1073741903))) and options.selectedNoteStyle < len(
                             availableNoteStyles) - 1:
-                        selectedNoteStyle += 1
+                        options.selectedNoteStyle += 1
                 if selectedOption == 4:
-                    if (events.key == K_a or ((events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (events.key == 1073741904))) or (events.key == K_d or ((events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (events.key == 1073741903))):
-                        downscroll = not downscroll
+                    if (events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904))) or (events.key == K_d or (
+                            (events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (
+                            events.key == 1073741903))):
+                        options.downscroll = not options.downscroll
                 if selectedOption == 5:
+                    if (events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904))) or (events.key == K_d or (
+                            (events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (
+                            events.key == 1073741903))):
+                        options.debugMode = not options.debugMode
+                if selectedOption == 6:
+                    if (events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904))) or (events.key == K_d or (
+                            (events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (
+                            events.key == 1073741903))):
+                        if options.healthFormat == "Healthbar":
+                            options.healthFormat = "Infobar"
+                        else:
+                            options.healthFormat = "Healthbar"
+                if selectedOption == 7:
+                    if (events.key == K_a or (
+                            (events.key == K_LEFT and K_LEFT != 1073741904 and K_RIGHT != 1073741904) or (
+                            events.key == 1073741904))) or (events.key == K_d or (
+                            (events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (
+                            events.key == 1073741903))):
+                        options.coloredInfo = not options.coloredInfo
+                if selectedOption == 8:
                     if events.key == K_RETURN and not preventDoubleEnter:
                         currentMenu = "Keybinds"
                         preventDoubleEnter = True
+                if selectedOption == 9:
+                    if events.key == K_RETURN and not preventDoubleEnter:
+                        options.saveOptions()
+                        mouse.set_visible(True)
+                        offset_editor()
+                        options.update()
+                        mouse.set_visible(False)
             if currentMenu == "Main":
-                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedMain > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (
+                        events.key == 1073741906))) and selectedMain > 0:
                     selectedMain -= 1
-                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedMain < 1:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (
+                        events.key == 1073741905))) and selectedMain < 1:
                     selectedMain += 1
             if currentMenu == "Keybinds":
-                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (events.key == 1073741906))) and selectedKeybind > 0:
+                if (events.key == K_w or ((events.key == K_UP and K_UP != 1073741906 and K_DOWN != 1073741906) or (
+                        events.key == 1073741906))) and selectedKeybind > 0:
                     selectedKeybind -= 1
-                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (events.key == 1073741905))) and selectedKeybind < 8:
+                if (events.key == K_s or ((events.key == K_DOWN and K_DOWN != 1073741905 and K_UP != 1073741905) or (
+                        events.key == 1073741905))) and selectedKeybind < 8:
                     selectedKeybind += 1
                 if events.key == K_RETURN and not preventDoubleEnter and selectedKeybind < 8:
                     currentMenu = "Edit keybind"
