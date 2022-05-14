@@ -67,5 +67,11 @@ v1.7:
 - Changed the menu music (changed to the main menu music from the FNF indie cross mod)
 - Changed how the options work in the code, to make it cleaner and easier to add new options
 - Code optimisations
- 
+- Added 6 new songs:
+ - Last reel (FNF indie cross)(the notes are not synced to the music after half of the song for some reason)
+ - Nightmare run (FNF indie cross)(Some notes are not appearing as they are death notes)
+ - Burning in hell (FNF indie cross)(same here)
+ - Power outage (Funkin' at Freddy's)
+ - Chartering (FF celebration mod)
+ - Sussy Wussy (FF celebration mod)
  
