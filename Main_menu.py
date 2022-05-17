@@ -1,9 +1,6 @@
-from pygame import *
+﻿from pygame import *
 import json
 from random import *
-import time as Time
-import cProfile
-import sys
 from Game import Main_game
 import os
 from Offset_editor import offset_editor
@@ -159,24 +156,6 @@ def drawEditKeybinds():
     temp1 = temp.get_rect()
     temp1.midtop = middleScreen
     screen.blit(temp, temp1)
-
-
-def saveOptions():
-    global options
-    options["selectedSpeed"] = selectedSpeed
-    options["playAs"] = playAs
-    if noDying:
-        options["noDying"] = "True"
-    else:
-        options["noDying"] = "False"
-    if debugMode:
-        options["debug_mode"] = "True"
-    else:
-        options["debug_mode"] = "False"
-    options["downscroll"] = str(downscroll)
-    options["selectedNoteStyle"] = selectedNoteStyle
-    options["keybinds"] = [K_a, K_s, K_w, K_d, K_LEFT, K_DOWN, K_UP, K_RIGHT]
-    json.dump(options, open("assets" + os.path.sep + "options.json", "w"))
 
 
 menuMusic.play(-1)

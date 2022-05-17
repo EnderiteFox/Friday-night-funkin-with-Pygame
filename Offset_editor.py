@@ -141,13 +141,7 @@ def offset_editor():
     class Character:
         def __init__(self, name, characterNum):
             if name != "None":
-                temp = characterNum
                 self.texture = getXmlData(name)
-                try:
-                    dontFlip = json.load(open(name + os.path.sep + "characterData.json"))[
-                        "dont_flip"]
-                except:
-                    dontFlip = "False"
                 try:
                     self.textureDirection = json.load(open(name + os.path.sep + "characterData.json"))[
                         "texture_direction"]
@@ -167,8 +161,7 @@ def offset_editor():
             else:
                 self.texture = [[Font30.render("", 1, (255, 255, 255))] for k in range(5)]
 
-    def chooseDirectory():
-        global screen
+    def chooseDirectory(screen):
         display.toggle_fullscreen()
         folder_path = askdirectory(parent=root,
                                    initialdir="assets" + os.path.sep + "Images" + os.path.sep + "characters",
@@ -278,7 +271,7 @@ def offset_editor():
                     if display.Info().current_w - clickHitboxWidth < events.pos[0] < display.Info().current_w:
                         if 0 < events.pos[1] < clickHitboxHeight:
                             try:
-                                folderPath = chooseDirectory()
+                                folderPath = chooseDirectory(screen)
                                 if folderPath is not None and folderPath != "":
                                     characterName = ""
                                     tempPos = 0
