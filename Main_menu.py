@@ -192,7 +192,10 @@ while True:
                     hasPlayedMicDrop = False
                     combo = 0
                     bpm = 60000 / 100
-                    restart = Main_game(musicList[selectedMusic], options)
+                    try:
+                        restart = Main_game(musicList[selectedMusic], options)
+                    except:
+                        restart = False
                 menuMusic.play(-1)
             if currentMenu == "Main":
                 if selectedMain == 0:
