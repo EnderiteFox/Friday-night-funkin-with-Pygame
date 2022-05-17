@@ -84,7 +84,6 @@ def Main_game(musicName, options):
     # region variables
     sys.setrecursionlimit(1000000)
     useMustHitSection = False
-    clock = time.Clock()
     if 690 >= display.Info().current_w - 690:
         singlePlayer = True
     else:
@@ -98,7 +97,6 @@ def Main_game(musicName, options):
     accuracyDisplayTime = 0
     showAccuracy = False
     accuracyIndicator = ""
-    accuracyIndicatorTime = Time.time()
     accuracyPercentList = []
 
     Font40 = font.SysFont("Comic Sans MS", 40)
@@ -116,6 +114,11 @@ def Main_game(musicName, options):
             "modifications"]
     except:
         modifications = []
+
+    try:
+        dynamic_modifications = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "modchart.json"))["modchart"]
+    except:
+        dynamic_modifications = []
 
     hasPlayedMicDrop = False
     # endregion
@@ -456,7 +459,7 @@ def Main_game(musicName, options):
         for note in section["sectionNotes"]:
             tempUser = ""
             tempDirection = ""
-            if type(note[2]) == int or type(note[2]) == float:
+            if isinstance(note[2], int) or isinstance(note[2], float):
                 if not useMustHitSection:
                     if 3 >= note[1] >= 0:
                         tempUser = tempPlayAs[0]
@@ -680,14 +683,6 @@ def Main_game(musicName, options):
                             self.pos[0] = display.Info().current_w / 2 - self.centeredOffset[0]
                         if self.isCentered[1] == "True":
                             self.pos[1] = display.info().current_h / 2 + self.centeredOffset[1]
-                # Get dontFlip value (unused now)
-                try:
-                    dontFlip = json.load(open(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(
-                            name) + os.path.sep + "characterData.json"))[
-                        "dont_flip"]
-                except:
-                    dontFlip = "False"
                 # Invert texture and offset when necessary
                 if (textureDirection == "Left" and characterNum == 1) or (
                         textureDirection == "Right" and characterNum == 2):
@@ -1281,6 +1276,40 @@ def Main_game(musicName, options):
         else:
             temp1.midbottom = (middleScreen[0], height - 10)
         screen.blit(temp, temp1)
+
+    def update_modifications():
+        global modifications
+        currentTime = Time.time() - startTime
+        currentTime *= 1000
+        for mod in dynamic_modifications:
+            if mod["name"] == "hideNotes1" and mod["pos"] >= currentTime:
+                if mod["action"] == "add":
+                    modifications.append("hideNotes1")
+                elif mod["action"] == "remove":
+                    modifications.remove("hideNotes1")
+                dynamic_modifications.remove(mod)
+
+    def is_in_modifications(attribute, type):
+        if type == "str":
+            return attribute in modifications
+        if type == "list":
+            for element in modifications:
+                if type(element) == list:
+                    for tempAttribute in element:
+                        if tempAttribute == attribute:
+                            return True
+            return False
+        if type == "dict":
+            for element in modifications:
+                if type(element) == dict:
+                    if attribute in element.keys:
+                        return True
+            return False
+        if type == "dictName":
+            for element in modifications:
+                if type(element) == dict and element["name"] == attribute:
+                    return True
+            return False
 
     # endregion
 
