@@ -1,7 +1,9 @@
 Planned things for future updates:
   
 v1.8:
-- Modcharts
+[X] Cleaned some code
+[X] Now crashing won't make you quit the game. It will instead send you back to the main menu
+[ ] Modcharts
 
 Future things with no defined update:
   - Adding all animated backgrounds
