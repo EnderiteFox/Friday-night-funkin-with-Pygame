@@ -18,6 +18,8 @@ playerAnimation = ["Up", -10]
 hasPlayedMicDrop = False
 combo = 0
 bpm = 60000 / 100
+arrow1Alpha = 1
+arrow2Alpha = 1
 
 
 def Main_game(musicName, options):
@@ -32,6 +34,9 @@ def Main_game(musicName, options):
     global hasPlayedMicDrop
     global combo
     global bpm
+    global arrow1Alpha
+    global arrow2Alpha
+
     misses = 0
     health = 50
     combo = 0
@@ -116,9 +121,13 @@ def Main_game(musicName, options):
         modifications = []
 
     try:
-        dynamic_modifications = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "modchart.json"))["modchart"]
+        dynamic_modifications = json.load(open(
+            "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "modchart.json"))[
+            "modchart"]
     except:
         dynamic_modifications = []
+
+    transitionValuesList = []
 
     hasPlayedMicDrop = False
     # endregion
@@ -670,7 +679,10 @@ def Main_game(musicName, options):
                     self.isCentered = "False"
                 if self.isCentered[0] == "True" or self.isCentered[1] == "True":
                     try:
-                        self.centeredOffset = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)]["centeredOffset"]
+                        self.centeredOffset = json.load(open(
+                            "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                                musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)][
+                            "centeredOffset"]
                     except:
                         self.centeredOffset = [0, 0]
                     if characterNum == 1:
@@ -784,36 +796,52 @@ def Main_game(musicName, options):
             else:
                 temp.bottomright = (width - 540, height - 50)
             if K_a in keyPressed or K_LEFT in keyPressed:
-                screen.blit(pressedArrowsSkins[0], temp)
+                temp1 = copy.copy(pressedArrowsSkins[0])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(greyArrow[0], temp)
+                temp1 = copy.copy(greyArrow[0])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
             temp = arrowRect
             if not options.downscroll:
                 temp.topright = (width - 380, 50)
             else:
                 temp.bottomright = (width - 380, height - 50)
             if K_s in keyPressed or K_DOWN in keyPressed:
-                screen.blit(pressedArrowsSkins[1], temp)
+                temp1 = copy.copy(pressedArrowsSkins[1])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(greyArrow[1], temp)
+                temp1 = copy.copy(greyArrow[1])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
             temp = arrowRect
             if not options.downscroll:
                 temp.topright = (width - 220, 50)
             else:
                 temp.bottomright = (width - 220, height - 50)
             if K_w in keyPressed or K_UP in keyPressed:
-                screen.blit(pressedArrowsSkins[2], temp)
+                temp1 = copy.copy(pressedArrowsSkins[2])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(greyArrow[2], temp)
+                temp1 = copy.copy(greyArrow[2])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
             temp = arrowRect
             if not options.downscroll:
                 temp.topright = (width - 60, 50)
             else:
                 temp.bottomright = (width - 60, height - 50)
             if K_d in keyPressed or K_RIGHT in keyPressed:
-                screen.blit(pressedArrowsSkins[3], temp)
+                temp1 = copy.copy(pressedArrowsSkins[3])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(greyArrow[3], temp)
+                temp1 = copy.copy(greyArrow[3])
+                temp1.set_alpha(arrow2Alpha * 255)
+                screen.blit(temp1, temp)
         if not singlePlayer and "hideNotes1" not in modifications:
             temp = arrowRect
             if not options.downscroll:
@@ -821,36 +849,52 @@ def Main_game(musicName, options):
             else:
                 temp.bottomleft = (60, height - 50)
             if currentTime - opponentHitTimes[0] > 0.15:
-                screen.blit(greyArrow[0], temp)
+                temp1 = copy.copy(greyArrow[0])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(pressedArrowsSkins[0], temp)
+                temp1 = copy.copy(pressedArrowsSkins[0])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
             temp = arrowRect
             if not options.downscroll:
                 temp.topleft = (220, 50)
             else:
                 temp.bottomleft = (220, height - 50)
             if currentTime - opponentHitTimes[1] > 0.15:
-                screen.blit(greyArrow[1], temp)
+                temp1 = copy.copy(greyArrow[1])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(pressedArrowsSkins[1], temp)
+                temp1 = copy.copy(pressedArrowsSkins[1])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
             temp = arrowRect
             if not options.downscroll:
                 temp.topleft = (380, 50)
             else:
                 temp.bottomleft = (380, height - 50)
             if currentTime - opponentHitTimes[2] > 0.15:
-                screen.blit(greyArrow[2], temp)
+                temp1 = copy.copy(greyArrow[2])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(pressedArrowsSkins[2], temp)
+                temp1 = copy.copy(pressedArrowsSkins[2])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
             temp = arrowRect
             if not options.downscroll:
                 temp.topleft = (540, 50)
             else:
                 temp.bottomleft = (540, height - 50)
             if currentTime - opponentHitTimes[3] > 0.15:
-                screen.blit(greyArrow[3], temp)
+                temp1 = copy.copy(greyArrow[3])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
             else:
-                screen.blit(pressedArrowsSkins[3], temp)
+                temp1 = copy.copy(pressedArrowsSkins[3])
+                temp1.set_alpha(arrow1Alpha * 255)
+                screen.blit(temp1, temp)
 
     def drawNotes():
         global misses
@@ -889,7 +933,7 @@ def Main_game(musicName, options):
                                 temp.topleft = (220, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomleft = (
-                                220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[1], temp)
                         elif note.side == "Opponent" and note.column == "Left":
                             temp = arrowRect
@@ -897,7 +941,7 @@ def Main_game(musicName, options):
                                 temp.topleft = (60, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomleft = (
-                                60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[0], temp)
                         elif note.side == "Opponent" and note.column == "Up":
                             temp = arrowRect
@@ -905,7 +949,7 @@ def Main_game(musicName, options):
                                 temp.topleft = (380, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomleft = (
-                                380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[2], temp)
                         elif note.side == "Opponent" and note.column == "Right":
                             temp = arrowRect
@@ -913,44 +957,44 @@ def Main_game(musicName, options):
                                 temp.topleft = (540, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomleft = (
-                                540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[3], temp)
                     if "hideNotes2" not in modifications:
                         if note.side == "Player" and note.column == "Down":
                             temp = arrowRect
                             if not options.downscroll:
                                 temp.topright = (
-                                width - 380, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 380, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomright = (
-                                width - 380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[1], temp)
                         elif note.side == "Player" and note.column == "Left":
                             temp = arrowRect
                             if not options.downscroll:
                                 temp.topright = (
-                                width - 540, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 540, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomright = (
-                                width - 540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[0], temp)
                         elif note.side == "Player" and note.column == "Up":
                             temp = arrowRect
                             if not options.downscroll:
                                 temp.topright = (
-                                width - 220, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 220, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomright = (
-                                width - 220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[2], temp)
                         elif note.side == "Player" and note.column == "Right":
                             temp = arrowRect
                             if not options.downscroll:
                                 temp.topright = (
-                                width - 60, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 60, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
                                 temp.bottomright = (
-                                width - 60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                    width - 60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             screen.blit(arrowsSkins[3], temp)
 
                 else:
@@ -1030,7 +1074,7 @@ def Main_game(musicName, options):
                                     temp = arrowRect
                                     if not options.downscroll:
                                         temp.center = (60 + 125, 50 + (
-                                                    longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
+                                                longNote.pos - currentTime * 1000) * options.selectedSpeed + 100)
                                     else:
                                         temp.center = (
                                             60 + 125,
@@ -1277,17 +1321,62 @@ def Main_game(musicName, options):
             temp1.midbottom = (middleScreen[0], height - 10)
         screen.blit(temp, temp1)
 
-    def update_modifications():
-        global modifications
+    class transitionValue:
+        def __init__(self, variable, startValue, endValue, startTime1, endTime):
+            self.variable = variable
+            self.startValue = startValue
+            self.endValue = endValue
+            self.startTime = startTime1
+            self.endTime = endTime
+            self.isActive = True
+
+        def update(self):
+            global arrow1Alpha
+            global arrow2Alpha
+            currentTime = Time.time() - startTime
+            if self.endTime >= currentTime >= self.startTime:
+                vector = self.endValue - self.startValue
+                progress = currentTime / (self.startTime + self.endTime)
+                value = self.startValue + (vector * progress)
+                if self.variable == "arrow1Alpha":
+                    arrow1Alpha = value
+                elif self.variable == "arrow2Alpha":
+                    arrow2Alpha = value
+            elif currentTime > self.endTime:
+                if self.variable == "arrow1Alpha":
+                    arrow1Alpha = self.endValue
+                elif self.variable == "arrow2Alpha":
+                    arrow2Alpha = self.endValue
+                self.isActive = False
+
+    def update_modifications(modifications, dynamic_modifications):
         currentTime = Time.time() - startTime
         currentTime *= 1000
         for mod in dynamic_modifications:
-            if mod["name"] == "hideNotes1" and mod["pos"] >= currentTime:
+            if mod["type"] == "add/remove" and mod["pos"] >= currentTime:
                 if mod["action"] == "add":
-                    modifications.append("hideNotes1")
+                    modifications.append(mod["name"])
                 elif mod["action"] == "remove":
-                    modifications.remove("hideNotes1")
+                    if mod["name"] in modifications:
+                        modifications.remove(mod["name"])
                 dynamic_modifications.remove(mod)
+            if mod["type"] == "alphaChange":
+                try:
+                    temp = mod["pos"]
+                except:
+                    temp = 0
+                if currentTime >= temp:
+                    if mod["player"] == 1:
+                        transitionValuesList.append(transitionValue("arrow1Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                    if mod["player"] == 2:
+                        transitionValuesList.append(transitionValue("arrow2Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                    dynamic_modifications.remove(mod)
+
+    def update_transitionValue():
+        for element in transitionValuesList:
+            element.update()
+            if not element.isActive:
+                transitionValuesList.remove(element)
 
     def is_in_modifications(attribute, type):
         if type == "str":
@@ -1401,6 +1490,9 @@ def Main_game(musicName, options):
         screen.fill((0, 0, 0))
         backgroundFrameNum = int((((Time.time() - startTime) * 1000 / 2) % bpm) / bpm * len(Background))
         screen.blit(Background[backgroundFrameNum], BGrect)
+        update_modifications(modifications, dynamic_modifications)
+        update_transitionValue()
+        print(arrow2Alpha)
         drawCharacters()
         drawGreyNotes()
         drawLongNotes()
