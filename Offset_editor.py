@@ -40,7 +40,7 @@ def offset_editor():
     currentAnimation = 4
     currentFrame = 0
     currentSize = [1, 1]
-    offset = [[[0, 0]] for k in range(5)]
+    offset = [[[0, 0]] for _ in range(5)]
 
     markerPos1 = [0, 0]
     markerPos2 = [0, 0]
@@ -175,7 +175,7 @@ def offset_editor():
         temp1 = temp.get_rect()
         temp1.midbottom = (300 + (offset[currentAnimation][currentFrame][0] * currentSize[0]),
                            display.Info().current_h - 100 - (
-                                       offset[currentAnimation][currentFrame][1] * currentSize[1]))
+                                   offset[currentAnimation][currentFrame][1] * currentSize[1]))
         screen.blit(temp, temp1)
 
     lastPressed = 0
