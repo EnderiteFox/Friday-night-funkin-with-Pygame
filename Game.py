@@ -934,7 +934,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[1], temp)
+                            temp1 = copy.copy(arrowsSkins[1])
+                            temp1.set_alpha(arrow1Alpha * 255)
+                            screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Left":
                             temp = arrowRect
                             if not options.downscroll:
@@ -942,7 +944,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[0], temp)
+                            temp1 = arrowsSkins[0]
+                            temp1.set_alpha(arrow1Alpha * 255)
+                            screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Up":
                             temp = arrowRect
                             if not options.downscroll:
@@ -950,7 +954,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[2], temp)
+                            temp1 = copy.copy(arrowsSkins[2])
+                            temp1.set_alpha(arrow1Alpha * 255)
+                            screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Right":
                             temp = arrowRect
                             if not options.downscroll:
@@ -958,7 +964,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[3], temp)
+                            temp1 = copy.copy(arrowsSkins[3])
+                            temp1.set_alpha(arrow1Alpha * 255)
+                            screen.blit(temp1, temp)
                     if "hideNotes2" not in modifications:
                         if note.side == "Player" and note.column == "Down":
                             temp = arrowRect
@@ -968,7 +976,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[1], temp)
+                            temp1 = copy.copy(arrowsSkins[1])
+                            temp1.set_alpha(arrow2Alpha * 255)
+                            screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Left":
                             temp = arrowRect
                             if not options.downscroll:
@@ -977,7 +987,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[0], temp)
+                            temp1 = copy.copy(arrowsSkins[0])
+                            temp1.set_alpha(arrow2Alpha * 255)
+                            screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Up":
                             temp = arrowRect
                             if not options.downscroll:
@@ -986,7 +998,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[2], temp)
+                            temp1 = copy.copy(arrowsSkins[2])
+                            temp1.set_alpha(arrow2Alpha * 255)
+                            screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Right":
                             temp = arrowRect
                             if not options.downscroll:
@@ -995,7 +1009,9 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            screen.blit(arrowsSkins[3], temp)
+                            temp1 = copy.copy(arrowsSkins[3])
+                            temp1.set_alpha(arrow2Alpha * 255)
+                            screen.blit(temp1, temp)
 
                 else:
                     renderNotes = False
@@ -1067,9 +1083,13 @@ def Main_game(musicName, options):
                                             220 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        screen.blit(longNotesEnd[1], temp)
+                                        temp1 = copy.copy(longNotesEnd[1])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                                     else:
-                                        screen.blit(longNotesImg[1], temp)
+                                        temp1 = copy.copy(longNotesImg[1])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                                 if longNote.column == "Left":
                                     temp = arrowRect
                                     if not options.downscroll:
@@ -1080,9 +1100,13 @@ def Main_game(musicName, options):
                                             60 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        screen.blit(longNotesEnd[0], temp)
+                                        temp1 = copy.copy(longNotesEnd[0])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                                     else:
-                                        screen.blit(longNotesImg[0], temp)
+                                        temp1 = copy.copy(longNotesImg[0])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                                 if longNote.column == "Up":
                                     temp = arrowRect
                                     if not options.downscroll:
@@ -1094,9 +1118,13 @@ def Main_game(musicName, options):
                                             380 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        screen.blit(longNotesEnd[2], temp)
+                                        temp1 = copy.copy(longNotesEnd[2])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                                     else:
-                                        screen.blit(longNotesImg[2], temp)
+                                        temp1 = copy.copy(longNotesImg[2])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                                 if longNote.column == "Right":
                                     temp = arrowRect
                                     if not options.downscroll:
@@ -1108,9 +1136,13 @@ def Main_game(musicName, options):
                                             540 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        screen.blit(longNotesEnd[3], temp)
+                                        temp1 = copy.copy(longNotesEnd[3])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                                     else:
-                                        screen.blit(longNotesImg[3], temp)
+                                        temp1 = copy.copy(longNotesImg[3])
+                                        temp1.set_alpha(arrow1Alpha * 255)
+                                        screen.blit(temp1, temp)
                             if longNote.side == "Player" and "hideNotes2" not in modifications:
                                 if longNote.column == "Up":
                                     temp = arrowRect
@@ -1126,8 +1158,11 @@ def Main_game(musicName, options):
                                         img = copy.copy(longNotesEnd[2])
                                     else:
                                         img = copy.copy(longNotesImg[2])
-                                    if transparent:
-                                        img.set_alpha(100)
+                                    if arrow2Alpha:
+                                        if transparent:
+                                            img.set_alpha(100)
+                                    else:
+                                        img.set_alpha(arrow2Alpha * 255)
                                     screen.blit(img, temp)
                                 if longNote.column == "Down":
                                     temp = arrowRect
@@ -1143,8 +1178,11 @@ def Main_game(musicName, options):
                                         img = copy.copy(longNotesEnd[1])
                                     else:
                                         img = copy.copy(longNotesImg[1])
-                                    if transparent:
-                                        img.set_alpha(100)
+                                    if arrow2Alpha == 1:
+                                        if transparent:
+                                            img.set_alpha(100)
+                                    else:
+                                        img.set_alpha(arrow2Alpha * 255)
                                     screen.blit(img, temp)
                                 if longNote.column == "Left":
                                     temp = arrowRect
@@ -1160,8 +1198,11 @@ def Main_game(musicName, options):
                                         img = copy.copy(longNotesEnd[0])
                                     else:
                                         img = copy.copy(longNotesImg[0])
-                                    if transparent:
-                                        img.set_alpha(100)
+                                    if arrow2Alpha == 1:
+                                        if transparent:
+                                            img.set_alpha(100)
+                                    else:
+                                        img.set_alpha(arrow2Alpha * 255)
                                     screen.blit(img, temp)
                                 if longNote.column == "Right":
                                     temp = arrowRect
@@ -1177,8 +1218,11 @@ def Main_game(musicName, options):
                                         img = copy.copy(longNotesEnd[3])
                                     else:
                                         img = copy.copy(longNotesImg[3])
-                                    if transparent:
-                                        img.set_alpha(100)
+                                    if arrow2Alpha == 1:
+                                        if transparent:
+                                            img.set_alpha(100)
+                                    else:
+                                        img.set_alpha(arrow2Alpha * 255)
                                     screen.blit(img, temp)
             if deleteGroup:
                 deleteList.append(noteGroup.id)
