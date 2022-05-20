@@ -10,6 +10,7 @@ v1.8:
 [X] Fixed transitionValue object math
 [X] Fixed the "You can't run" song
 [ ] Adding all mid-song alpha changes
+[ ] Allowing loading multiple characters
 [ ] Modcharts
 
 Future things with no defined update:
