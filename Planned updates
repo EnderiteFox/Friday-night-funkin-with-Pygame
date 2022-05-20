@@ -7,7 +7,9 @@ v1.8:
 [X] Added transitionValue object (used to make a linear transition for a value given a start value, an end value, a start time and an end time)
 [X] Added a value that controls the arrows transparency
 [X] Simple modcharts can edit the arrows alpha (using transitionValue object)
-[X] Fix transitionValue object math
+[X] Fixed transitionValue object math
+[X] Fixed the "You can't run" song
+[ ] Adding all mid-song alpha changes
 [ ] Modcharts
 
 Future things with no defined update:
