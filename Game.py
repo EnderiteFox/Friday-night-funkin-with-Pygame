@@ -1336,7 +1336,7 @@ def Main_game(musicName, options):
             currentTime = Time.time() - startTime
             if self.endTime >= currentTime >= self.startTime:
                 vector = self.endValue - self.startValue
-                progress = currentTime / (self.startTime + self.endTime)
+                progress = (currentTime - self.startTime) / (self.endTime - self.startTime)
                 value = self.startValue + (vector * progress)
                 if self.variable == "arrow1Alpha":
                     arrow1Alpha = value
@@ -1367,9 +1367,13 @@ def Main_game(musicName, options):
                     temp = 0
                 if currentTime >= temp:
                     if mod["player"] == 1:
-                        transitionValuesList.append(transitionValue("arrow1Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                        transitionValuesList.append(
+                            transitionValue("arrow1Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
+                                            mod["endTime"]))
                     if mod["player"] == 2:
-                        transitionValuesList.append(transitionValue("arrow2Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                        transitionValuesList.append(
+                            transitionValue("arrow2Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
+                                            mod["endTime"]))
                     dynamic_modifications.remove(mod)
 
     def update_transitionValue():
