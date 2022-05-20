@@ -194,6 +194,8 @@ while True:
                     bpm = 60000 / 100
                     arrow1Alpha = 1
                     arrow2Alpha = 1
+                    character1Alpha = 1
+                    character2Alpha = 1
                     if not options.debugMode:
                         try:
                             restart = Main_game(musicList[selectedMusic], options)

@@ -20,6 +20,8 @@ combo = 0
 bpm = 60000 / 100
 arrow1Alpha = 1
 arrow2Alpha = 1
+character1Alpha = 1
+character2Alpha = 1
 
 
 def Main_game(musicName, options):
@@ -36,6 +38,8 @@ def Main_game(musicName, options):
     global bpm
     global arrow1Alpha
     global arrow2Alpha
+    global character1Alpha
+    global character2Alpha
 
     misses = 0
     health = 50
@@ -130,6 +134,8 @@ def Main_game(musicName, options):
     transitionValuesList = []
 
     hasPlayedMicDrop = False
+
+    loadedCharacters = {}
     # endregion
 
     # region images loading
@@ -734,9 +740,17 @@ def Main_game(musicName, options):
     # Load characters
     if options.playAs == "Player":
         try:
-            character1 = Character(
-                json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character1"]["Name"], 1)
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 1)
+                character1 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 1)
+                character1 = loadedCharacters[alias]
         except error as e:
             print("Opponent character loading failed, skipping loading")
             if options.debugMode:
@@ -1268,7 +1282,9 @@ def Main_game(musicName, options):
             temp = character1.texture[4][animationFrame].get_rect()
             temp.midbottom = [character1.pos[4][animationFrame][0],
                               display.Info().current_h - character1.pos[4][animationFrame][1]]
-            screen.blit(character1.texture[4][animationFrame], temp)
+            temp1 = copy.copy(character1.texture[4][animationFrame])
+            temp1.set_alpha(character1Alpha * 255)
+            screen.blit(temp1, temp)
         # Directional animation
         else:
             animationDirection = ["Left", "Down", "Up", "Right"].index(opponentAnimation[0])
@@ -1280,7 +1296,9 @@ def Main_game(musicName, options):
             temp = character1.texture[animationDirection][numFrame].get_rect()
             temp.midbottom = [character1.pos[animationDirection][numFrame][0],
                               display.Info().current_h - character1.pos[animationDirection][numFrame][1]]
-            screen.blit(character1.texture[animationDirection][numFrame], temp)
+            temp1 = copy.copy(character1.texture[animationDirection][numFrame])
+            temp1.set_alpha(character1Alpha * 255)
+            screen.blit(temp1, temp)
         #   Character 2
         # Idle animation
         if currentTime - playerAnimation[1] >= 0.75:
@@ -1288,7 +1306,9 @@ def Main_game(musicName, options):
             temp = character2.texture[4][animationFrame].get_rect()
             temp.midbottom = [display.Info().current_w - character2.pos[4][animationFrame][0],
                               display.Info().current_h - character2.pos[4][animationFrame][1]]
-            screen.blit(character2.texture[4][animationFrame], temp)
+            temp1 = copy.copy(character2.texture[4][animationFrame])
+            temp1.set_alpha(character2Alpha * 255)
+            screen.blit(temp1, temp)
         # Directional animation
         else:
             animationDirection = ["Left", "Down", "Up", "Right"].index(playerAnimation[0])
@@ -1300,7 +1320,9 @@ def Main_game(musicName, options):
             temp = character2.texture[animationDirection][numFrame].get_rect()
             temp.midbottom = [display.Info().current_w - character2.pos[animationDirection][numFrame][0],
                               display.Info().current_h - character2.pos[animationDirection][numFrame][1]]
-            screen.blit(character2.texture[animationDirection][numFrame], temp)
+            temp1 = copy.copy(character2.texture[animationDirection][numFrame])
+            temp1.set_alpha(character2Alpha * 255)
+            screen.blit(temp1, temp)
 
     # endregion
 
@@ -1377,6 +1399,8 @@ def Main_game(musicName, options):
         def update(self):
             global arrow1Alpha
             global arrow2Alpha
+            global character1Alpha
+            global character2Alpha
             currentTime = Time.time() - startTime
             if self.endTime >= currentTime >= self.startTime:
                 vector = self.endValue - self.startValue
@@ -1386,11 +1410,19 @@ def Main_game(musicName, options):
                     arrow1Alpha = value
                 elif self.variable == "arrow2Alpha":
                     arrow2Alpha = value
+                elif self.variable == "character1Alpha":
+                    character1Alpha = value
+                elif self.variable == "character2Alpha":
+                    character2Alpha = value
             elif currentTime > self.endTime:
                 if self.variable == "arrow1Alpha":
                     arrow1Alpha = self.endValue
                 elif self.variable == "arrow2Alpha":
                     arrow2Alpha = self.endValue
+                elif self.variable == "character1Alpha":
+                    character1Alpha = self.endValue
+                elif self.variable == "character2Alpha":
+                    character2Alpha = self.endValue
                 self.isActive = False
 
     def update_modifications(modifications, dynamic_modifications):
@@ -1404,7 +1436,7 @@ def Main_game(musicName, options):
                     if mod["name"] in modifications:
                         modifications.remove(mod["name"])
                 dynamic_modifications.remove(mod)
-            if mod["type"] == "alphaChange":
+            if mod["type"] == "arrowAlphaChange":
                 try:
                     temp = mod["pos"]
                 except:
@@ -1418,6 +1450,17 @@ def Main_game(musicName, options):
                         transitionValuesList.append(
                             transitionValue("arrow2Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
                                             mod["endTime"]))
+                    dynamic_modifications.remove(mod)
+            if mod["type"] == "characterAlphaChange":
+                try:
+                    temp = mod["pos"]
+                except:
+                    temp = 0
+                if currentTime >= temp:
+                    if mod["player"] == 1:
+                        transitionValuesList.append(transitionValue("character1Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                    if mod["player"] == 2:
+                        transitionValuesList.append(transitionValue("character2Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
                     dynamic_modifications.remove(mod)
 
     def update_transitionValue():
@@ -1540,7 +1583,6 @@ def Main_game(musicName, options):
         screen.blit(Background[backgroundFrameNum], BGrect)
         update_modifications(modifications, dynamic_modifications)
         update_transitionValue()
-        print(arrow2Alpha)
         drawCharacters()
         drawGreyNotes()
         drawLongNotes()
