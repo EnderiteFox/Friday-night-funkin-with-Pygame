@@ -11,7 +11,9 @@ v1.8:
 [X] Fixed the "You can't run" song
 [X] Adding all mid-song alpha changes
 [X] Simple modcharts can edit the characters alpha (using transitionValue object)
-[ ] Allowing loading multiple characters
+[X] Allowing loading multiple characters
+[X] Now modcharts can change characters mid-game (Ex: in Sorrow, ben drown switches to alive ben at the end of the song)
+[ ] Improving performance by using .convert_alpha() when displaying arrows using custom alpha values
 [ ] Modcharts
 
 Future things with no defined update:
