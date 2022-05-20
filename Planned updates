@@ -7,7 +7,7 @@ v1.8:
 [X] Added transitionValue object (used to make a linear transition for a value given a start value, an end value, a start time and an end time)
 [X] Added a value that controls the arrows transparency (still only on grey arrow, not moving arrows)
 [X] Simple modcharts can edit the arrows alpha (using transitionValue object)
-[ ] Fix transitionValue object math
+[X] Fix transitionValue object math
 [ ] Modcharts
 
 Future things with no defined update:
