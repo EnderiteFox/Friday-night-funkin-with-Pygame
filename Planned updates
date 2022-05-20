@@ -3,6 +3,11 @@ Planned things for future updates:
 v1.8:
 [X] Cleaned some code
 [X] Now crashing won't make you quit the game. It will instead send you back to the main menu
+[X] Dynamic modcharts loading
+[X] Added transitionValue object (used to make a linear transition for a value given a start value, an end value, a start time and an end time)
+[X] Added a value that controls the arrows transparency
+[X] Simple modcharts can edit the arrows alpha (using transitionValue object)
+[X] Fix transitionValue object math
 [ ] Modcharts
 
 Future things with no defined update:
