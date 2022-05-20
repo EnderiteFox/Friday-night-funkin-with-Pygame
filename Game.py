@@ -20,6 +20,8 @@ combo = 0
 bpm = 60000 / 100
 arrow1Alpha = 1
 arrow2Alpha = 1
+character1 = None
+character2 = None
 character1Alpha = 1
 character2Alpha = 1
 
@@ -38,6 +40,8 @@ def Main_game(musicName, options):
     global bpm
     global arrow1Alpha
     global arrow2Alpha
+    global character1
+    global character2
     global character1Alpha
     global character2Alpha
 
@@ -87,7 +91,7 @@ def Main_game(musicName, options):
 
         display.flip()
 
-    loadingscreen(0, 5, "Loading variables")
+    loadingscreen(0, 6, "Loading variables")
     # endregion
 
     # region variables
@@ -140,7 +144,7 @@ def Main_game(musicName, options):
 
     # region images loading
     # region load images
-    loadingscreen(1, 5, "Loading textures")
+    loadingscreen(1, 6, "Loading textures")
 
     arrowsSkins = [
         transform.scale(
@@ -329,7 +333,7 @@ def Main_game(musicName, options):
 
     musicList = json.load(open("assets" + os.path.sep + "MusicList.json"))["musics"]
 
-    loadingscreen(2, 5, "Loading musics")
+    loadingscreen(2, 6, "Loading musics")
 
     # endregion
 
@@ -392,7 +396,7 @@ def Main_game(musicName, options):
     # endregion
 
     # region chart managment
-    loadingscreen(3, 5, "Loading chart")
+    loadingscreen(3, 6, "Loading chart")
 
     class Note:
         def __init__(self, pos, column, side, length, noteId):
@@ -550,7 +554,7 @@ def Main_game(musicName, options):
     # endregion
 
     # region characters
-    loadingscreen(4, 5, "Loading characters")
+    loadingscreen(4, 6, "Loading characters")
 
     def getAttibuteRect(data):
         return Rect(float(data.attrib["x"]), float(data.attrib["y"]), float(data.attrib["width"]),
@@ -635,7 +639,7 @@ def Main_game(musicName, options):
         return result
 
     class Character:
-        def __init__(self, name, characterNum):
+        def __init__(self, name, characterNum, loadedFromModchart=False):
             if name != "None":
                 if options.playAs == "Opponent":
                     if characterNum == 1:
@@ -645,10 +649,14 @@ def Main_game(musicName, options):
                 else:
                     temp = characterNum
                 # Load size and texture
-                self.size = \
-                    json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                        musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
-                        "size"]
+                if not loadedFromModchart:
+                    self.size = \
+                        json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
+                            "size"]
+                else:
+                    self.size = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                        musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name]["size"]
                 # Parse XML file and get texture based on XML indications
                 self.texture = getXmlData(name)
                 # Get offset
@@ -673,22 +681,37 @@ def Main_game(musicName, options):
                         self.offset[k][x][0] *= self.size[k][0]
                         self.offset[k][x][1] *= self.size[k][1]
                 # Get pos
-                self.pos = \
-                    json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                        musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
-                        "pos"]
+                if not loadedFromModchart:
+                    self.pos = \
+                        json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
+                            "pos"]
+                else:
+                    self.pos = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                        musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name]["pos"]
                 # Handle centered character
                 try:
-                    self.isCentered = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                        musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)]["isCentered"]
+                    if not loadedFromModchart:
+                        self.isCentered = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)][
+                            "isCentered"]
+                    else:
+                        self.isCenterd = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name]["isCentered"]
                 except:
-                    self.isCentered = "False"
+                    self.isCentered = ["False", "False"]
                 if self.isCentered[0] == "True" or self.isCentered[1] == "True":
                     try:
-                        self.centeredOffset = json.load(open(
-                            "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                                musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)][
-                            "centeredOffset"]
+                        if not loadedFromModchart:
+                            self.centeredOffset = json.load(open(
+                                "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                                    musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)][
+                                "centeredOffset"]
+                        else:
+                            self.centeredOffset = json.load(open(
+                                "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                                    musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name][
+                                "centeredOffset"]
                     except:
                         self.centeredOffset = [0, 0]
                     if characterNum == 1:
@@ -740,9 +763,11 @@ def Main_game(musicName, options):
     # Load characters
     if options.playAs == "Player":
         try:
-            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
             try:
-                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
             except:
                 alias = None
             if alias is None:
@@ -758,9 +783,19 @@ def Main_game(musicName, options):
                 print(e)
             character1 = Character("None", 1)
         try:
-            character2 = Character(
-                json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character2"]["Name"], 2)
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character2"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character2"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 2)
+                character2 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 2)
+                character2 = loadedCharacters[alias]
         except:
             print("Player character loading failed, skipping loading")
             if options.debugMode:
@@ -769,9 +804,19 @@ def Main_game(musicName, options):
             character2 = Character("None", 2)
     else:
         try:
-            character1 = Character(
-                json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character2"]["Name"], 1)
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 1)
+                character1 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 1)
+                character1 = loadedCharacters[alias]
         except error as e:
             print("Opponent character loading failed, skipping loading")
             if options.debugMode:
@@ -779,9 +824,19 @@ def Main_game(musicName, options):
                 print(e)
             character1 = Character("None", 1)
         try:
-            character2 = Character(
-                json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character1"]["Name"], 2)
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character2"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character2"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 2)
+                character2 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 2)
+                character2 = loadedCharacters[alias]
         except error as e:
             print("Player character loading failed, skipping loading")
             if options.debugMode:
@@ -797,7 +852,7 @@ def Main_game(musicName, options):
     # endregion
 
     # region screen and notes update
-    loadingscreen(5, 5, "Finishing...")
+    loadingscreen(5, 6, "Loading modcharts ressources")
 
     def drawGreyNotes():
         width = display.Info().current_w
@@ -1426,6 +1481,8 @@ def Main_game(musicName, options):
                 self.isActive = False
 
     def update_modifications(modifications, dynamic_modifications):
+        global character1
+        global character2
         currentTime = Time.time() - startTime
         currentTime *= 1000
         for mod in dynamic_modifications:
@@ -1458,9 +1515,24 @@ def Main_game(musicName, options):
                     temp = 0
                 if currentTime >= temp:
                     if mod["player"] == 1:
-                        transitionValuesList.append(transitionValue("character1Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                        transitionValuesList.append(
+                            transitionValue("character1Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
+                                            mod["endTime"]))
                     if mod["player"] == 2:
-                        transitionValuesList.append(transitionValue("character2Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                        transitionValuesList.append(
+                            transitionValue("character2Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
+                                            mod["endTime"]))
+                    dynamic_modifications.remove(mod)
+            if mod["type"] == "changeCharacter":
+                try:
+                    temp = mod["pos"]
+                except:
+                    temp = 0
+                if currentTime >= temp:
+                    if mod["player"] == 1:
+                        character1 = loadedCharacters[mod["name"]]
+                    elif mod["player"] == 2:
+                        character2 = loadedCharacters[mod["name"]]
                     dynamic_modifications.remove(mod)
 
     def update_transitionValue():
@@ -1491,6 +1563,21 @@ def Main_game(musicName, options):
                     return True
             return False
 
+    def modchartLoading():
+        for mod in dynamic_modifications:
+            if mod["type"] == "characterLoading":
+                try:
+                    alias = mod["alias"]
+                except:
+                    alias = None
+                if alias is None:
+                    loadedCharacters[mod["name"]] = Character(mod["name"], mod["player"], True)
+                else:
+                    loadedCharacters[mod["alias"]] = Character(mod["name"], mod["player"], True)
+
+    modchartLoading()
+
+    loadingscreen(6, 6, "Finishing...")
     # endregion
 
     keyPressed = []
