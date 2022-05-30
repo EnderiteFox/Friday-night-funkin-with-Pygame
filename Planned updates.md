@@ -12,9 +12,11 @@ v1.8:
 - [X] Adding all mid-song alpha changes  
 - [X] Simple modcharts can edit the characters alpha (using transitionValue object)  
 - [X] Allowing loading multiple characters  
+- [X] Allowing loading multiple arrow skins
 - [X] Now modcharts can change characters mid-game (Ex: in Sorrow, ben drown switches to alive ben at the end of the song)  
+- [X] Remove hard-coded arrow textures to use general programming (arrowTexture object)  
+- [X] Simple modcharts can now change the arrow skins in-game
 - [ ] Improving performance by using .convert_alpha() when displaying arrows using custom alpha values  
-- [ ] Remove hard-coded arrow textures to use general programming (arrowTexture object)
 - [ ] Modcharts (WIP, see wiki [here](https://github.com/EndersteveGamer/Friday-night-funkin-with-Pygame/wiki/Modding-guide-page))  
 - [ ] Maybe notes color customisation?  
 
