@@ -117,7 +117,7 @@ def Main_game(musicName, options):
 
     longNotesChart = []
 
-    opponentHitTimes = [-10 for k in range(4)]
+    opponentHitTimes = [-10 for _ in range(4)]
     opponentAnimation = ["Up", -10]
     playerAnimation = ["Up", -10]
 
@@ -582,7 +582,7 @@ def Main_game(musicName, options):
             "assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(
                 characterName) + os.path.sep + "character.png").convert_alpha()
         XMLfile = ET.parse(XMLpath).getroot()
-        result = [[] for k in range(5)]
+        result = [[] for _ in range(5)]
         for data in XMLfile:
             name = data.attrib["name"]
             tempResult = ""
@@ -601,9 +601,7 @@ def Main_game(musicName, options):
                     tempResult = "{0}{1}".format(tempResult, name[k])
                 if name[k] == " ":
                     temp = True
-            if tempResult == "":
-                tempResult = name
-            else:
+            if tempResult != "":
                 data.attrib["name"] = tempResult
         for data in XMLfile:
             name = data.attrib["name"]
@@ -665,7 +663,7 @@ def Main_game(musicName, options):
                         "assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(
                             name) + os.path.sep + "offset.json"))["offset"]
                 except:
-                    self.offset = [[] for k in range(5)]
+                    self.offset = [[] for _ in range(5)]
                     for k in range(5):
                         for x in range(len(self.texture[k])):
                             self.offset[k].append([0, 0])
@@ -757,8 +755,8 @@ def Main_game(musicName, options):
                             int(self.texture[k][x].get_height() * self.size[k][1])))
             # Handle no character
             else:
-                self.texture = [[Font40.render("", 1, (255, 255, 255))] for k in range(5)]
-                self.pos = [[[0, 0]] for k in range(5)]
+                self.texture = [[Font40.render("", 1, (255, 255, 255))] for _ in range(5)]
+                self.pos = [[[0, 0]] for _ in range(5)]
 
     # Load characters
     if options.playAs == "Player":
@@ -1103,7 +1101,6 @@ def Main_game(musicName, options):
                 deleteGroup = True
             if run and 50 + (noteGroup.notes[0].pos - currentTime * 1000) * options.selectedSpeed < height + 100:
                 for longNote in noteGroup.notes:
-                    transparent = False
                     if currentTime * 1000 - 133 >= longNote.pos:
                         if longNote.side == "Player":
                             if (noteGroup.size - len(noteGroup.notes)) / noteGroup.size >= 0.75:
@@ -1540,28 +1537,6 @@ def Main_game(musicName, options):
             element.update()
             if not element.isActive:
                 transitionValuesList.remove(element)
-
-    def is_in_modifications(attribute, type):
-        if type == "str":
-            return attribute in modifications
-        if type == "list":
-            for element in modifications:
-                if type(element) == list:
-                    for tempAttribute in element:
-                        if tempAttribute == attribute:
-                            return True
-            return False
-        if type == "dict":
-            for element in modifications:
-                if type(element) == dict:
-                    if attribute in element.keys:
-                        return True
-            return False
-        if type == "dictName":
-            for element in modifications:
-                if type(element) == dict and element["name"] == attribute:
-                    return True
-            return False
 
     def modchartLoading():
         for mod in dynamic_modifications:
