@@ -146,6 +146,127 @@ def Main_game(musicName, options):
     # region load images
     loadingscreen(1, 6, "Loading textures")
 
+    class arrowTexture:
+        def __init__(self, skinName):
+            self.arrowsSkins = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Arrows" + os.path.sep + "left.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(image.load(
+                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                        skinName) + os.path.sep + "Arrows" + os.path.sep + "down.png").convert_alpha(),
+                                (150, 150)),
+                transform.scale(image.load(
+                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                        skinName) + os.path.sep + "Arrows" + os.path.sep + "up.png").convert_alpha(),
+                                (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Arrows" + os.path.sep + "right.png").convert_alpha(),
+                    (150, 150))]
+
+            self.pressedArrowsSkins = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "left.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "down.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "up.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "right.png").convert_alpha(),
+                    (150, 150))]
+
+            self.greyArrow = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "left.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "down.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "up.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(image.load(
+                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                        skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "right.png").convert_alpha(),
+                                (150, 150))]
+
+            self.longNotesImg = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "left.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "down.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "up.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "right.png").convert_alpha(),
+                    (52, 46))]
+
+            if options.downscroll:
+                for k in range(len(self.longNotesImg)):
+                    self.longNotesImg[k] = transform.flip(self.longNotesImg[k], False, True)
+
+            self.longNotesEnd = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "left.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "down.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "up.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "right.png").convert_alpha(),
+                    (52, 46))]
+
+            if options.downscroll:
+                for k in range(len(self.longNotesEnd)):
+                    self.longNotesEnd[k] = transform.flip(self.longNotesEnd[k], False, True)
+
+    loadedArrowTextures = {"Main": arrowTexture(options.availableNoteStyles[options.selectedNoteStyle])}
+    loadedArrowTextures["Player"] = copy.copy(loadedArrowTextures["Main"])
+    loadedArrowTextures["Opponent"] = copy.copy(loadedArrowTextures["Main"])
+
     arrowsSkins = [
         transform.scale(
             image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
@@ -1531,6 +1652,19 @@ def Main_game(musicName, options):
                     elif mod["player"] == 2:
                         character2 = loadedCharacters[mod["name"]]
                     dynamic_modifications.remove(mod)
+            if mod["type"] == "changeArrowTexture":
+                try:
+                    temp = mod["pos"]
+                except:
+                    temp = 0
+                if currentTime >= temp:
+                    if mod["player"] == 1:
+                        loadedArrowTextures["Opponent"] = loadedArrowTextures[mod["name"]]
+                    elif mod["player"] == 2:
+                        loadedArrowTextures["Player"] = loadedArrowTextures[mod["name"]]
+                    dynamic_modifications.remove(mod)
+            if mod["type"] == "Organiser":
+                update_modifications(modifications, mod["modchart"])
 
     def update_transitionValue():
         for element in transitionValuesList:
@@ -1549,6 +1683,8 @@ def Main_game(musicName, options):
                     loadedCharacters[mod["name"]] = Character(mod["name"], mod["player"], True)
                 else:
                     loadedCharacters[mod["alias"]] = Character(mod["name"], mod["player"], True)
+            if mod["type"] == "arrowTextureLoading":
+                loadedArrowTextures[mod["loadedName"]] = arrowTexture(mod["textureName"])
 
     modchartLoading()
 
