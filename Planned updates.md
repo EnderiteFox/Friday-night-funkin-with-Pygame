@@ -14,6 +14,7 @@ v1.8:
 - [X] Allowing loading multiple characters  
 - [X] Now modcharts can change characters mid-game (Ex: in Sorrow, ben drown switches to alive ben at the end of the song)  
 - [ ] Improving performance by using .convert_alpha() when displaying arrows using custom alpha values  
+- [ ] Remove hard-coded arrow textures to use general programming (arrowTexture object)
 - [ ] Modcharts  
 - [ ] Maybe notes color customisation?  
 
