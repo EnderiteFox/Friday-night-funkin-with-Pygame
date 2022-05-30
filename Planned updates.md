@@ -15,17 +15,10 @@ v1.8:
 - [X] Now modcharts can change characters mid-game (Ex: in Sorrow, ben drown switches to alive ben at the end of the song)  
 - [ ] Improving performance by using .convert_alpha() when displaying arrows using custom alpha values  
 - [ ] Remove hard-coded arrow textures to use general programming (arrowTexture object)
-- [ ] Modcharts  
+- [ ] Modcharts (WIP, see wiki [here](https://github.com/EndersteveGamer/Friday-night-funkin-with-Pygame/wiki/Modding-guide-page))  
 - [ ] Maybe notes color customisation?  
 
 Future things with no defined update:
   - Adding all animated backgrounds
-  - Modifications (currently there is only 2: "hideNotes1" (opponent) and "hideNotes2" (player), more will be added later), can be modified with simple modcharts
-  - Modcharts. There will be 2 types:
-    - Simple modcharts. It will be a json file with simple commands allowing to edit the predefined modifications that are already coded in the program
-    - Complex modcharts. It is recommended to create them while running the Python edition of the game, and then distribute your mod by compiling the game in a exe file.
-      It is also recommended to have a great understanding of how the game is working (I will maybe make video tutorials when the game is completely finished)
-      It will be Python scripts executing with the song, so they will allow to make many complex things, but will be harder to make
-  - Editing gameplay elements to allow them to be edited by complex and simple modcharts
   - Adding multiple note types
   - Main menu rework
