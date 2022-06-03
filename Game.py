@@ -1337,7 +1337,7 @@ def Main_game(musicName, options):
             temp = character1.texture[4][animationFrame].get_rect()
             temp.midbottom = [character1.pos[4][animationFrame][0],
                               display.Info().current_h - character1.pos[4][animationFrame][1]]
-            temp1 = copy.copy(character1.texture[4][animationFrame]).convert_alpha()
+            temp1 = copy.copy(character1.texture[4][animationFrame])
             temp1.set_alpha(character1Alpha * 255)
             screen.blit(temp1, temp)
         # Directional animation
@@ -1351,7 +1351,7 @@ def Main_game(musicName, options):
             temp = character1.texture[animationDirection][numFrame].get_rect()
             temp.midbottom = [character1.pos[animationDirection][numFrame][0],
                               display.Info().current_h - character1.pos[animationDirection][numFrame][1]]
-            temp1 = copy.copy(character1.texture[animationDirection][numFrame]).convert_alpha()
+            temp1 = copy.copy(character1.texture[animationDirection][numFrame])
             temp1.set_alpha(character1Alpha * 255)
             screen.blit(temp1, temp)
         #   Character 2
@@ -1361,7 +1361,7 @@ def Main_game(musicName, options):
             temp = character2.texture[4][animationFrame].get_rect()
             temp.midbottom = [display.Info().current_w - character2.pos[4][animationFrame][0],
                               display.Info().current_h - character2.pos[4][animationFrame][1]]
-            temp1 = copy.copy(character2.texture[4][animationFrame]).convert_alpha()
+            temp1 = copy.copy(character2.texture[4][animationFrame])
             temp1.set_alpha(character2Alpha * 255)
             screen.blit(temp1, temp)
         # Directional animation
@@ -1375,7 +1375,7 @@ def Main_game(musicName, options):
             temp = character2.texture[animationDirection][numFrame].get_rect()
             temp.midbottom = [display.Info().current_w - character2.pos[animationDirection][numFrame][0],
                               display.Info().current_h - character2.pos[animationDirection][numFrame][1]]
-            temp1 = copy.copy(character2.texture[animationDirection][numFrame]).convert_alpha()
+            temp1 = copy.copy(character2.texture[animationDirection][numFrame])
             temp1.set_alpha(character2Alpha * 255)
             screen.blit(temp1, temp)
 
