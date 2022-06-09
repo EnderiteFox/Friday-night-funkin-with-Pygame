@@ -1,42 +1,42 @@
-# V1.1:  
+# V1.1
 Added long notes  
 
-# V1.2:  
+# V1.2
 Added main menu, fixed bugs, changed some files organisation  
 
-# V1.2.1:  
+# V1.2.1
 Fixed critical stack overflow issue  
 
-# V1.3:  
+# V1.3
 Added Main menu  
 Added options (Note speed, side and no death mechanic)  
 Added health mechanic  
 Added accuracy (the same as Kade engine accurate mode)  
 Added New songs  
 
-# V1.4:  
+# V1.4
 Added backgrounds  
 Added new note skin (Stepmania), you can change it in the settings  
 
-# V1.5:  
+# V1.5
 Added characters  
 You can now hide the notes of a character by adding "modifications": ["hideNotes1"] in the songData.json file (it hides the opponent's notes, for the player use "hideNotes2")  
 Added new songs  
 
-# V1.5.1:  
+# V1.5.1
 Added main menu music  
 Added Death menu  
 Added keybinds option  
 Options now save when you quit the game  
 Added a README.txt file with instructions how to play  
 
-# V1.5.2:  
+# V1.5.2
 Added downscroll  
 Added song progress bar  
 Added new musics  
 Fixed a bug with the no dying option not saving correctly  
 
-# V1.6:  
+# V1.6
 Changed the menu, now you can see more easily which option is selected  
 Reworked the long notes system, they are now integrated to gameplay!  
 How they work:  
@@ -48,7 +48,7 @@ How they work:
 Tell me what you think about this mechanic and if I need to change something!  
 The game is now available as a .exe file! (Took me 3 days to figure out how to do this XD)  
 
-# v1.7:  
+# v1.7
 - Characters animations rework (with multiple frames for each animation, so animated animations I guess)  
 - Fixed characters not appearing on certain conditions (I think Python >=3.9 and EduPython)  
 - Improved display for screen with a resolution inferior to 1080p  
@@ -64,7 +64,7 @@ The game is now available as a .exe file! (Took me 3 days to figure out how to d
 - Added the option to disable info bar color indicators to save performance  
 - Added the option to display health in the info bar instead of a health bar  
 - Fixed a bug with the vertical offset being inverted  
-- Changed the menu music (changed to the main menu music from the FNF indie cross mod)  
+- Changed the menu music (changed to the main menu music from the FNF indie cross mod) 
 - Changed how the options work in the code, to make it cleaner and easier to add new options  
 - Code optimisations  
 - Added 6 new songs:  
@@ -76,3 +76,15 @@ The game is now available as a .exe file! (Took me 3 days to figure out how to d
  - Sussy Wussy (FF celebration mod)  
  - Hellclown is not working, this is because the character texture is saved differently, I have to find how to create textures with XML files to fix it in 1.8.1  
  
+# v1.8
+- Cleaned some code
+- Now crashing in-game won't crash the game. It will instead send you back to the main menu
+- Added transitionValue object. It is used by modcharts to make a linear transition between a start value and an end value
+- Added simple modcharts. They can:
+  - Control the transparency of arrows
+  - Control the alpha of characters
+  - Change characters in-game
+  - Change the arrow skin in-game
+- Added all mid-song alpha changes using modcharts
+- Added all mid-song character changes using modcharts (in Sorrow and Satisfracture)
+- Fixed the "You can't run" song
