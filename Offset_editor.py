@@ -82,7 +82,7 @@ def offset_editor():
         XMLpath = folderPath + os.path.sep + "character.xml"
         characterImage = image.load(folderPath + os.path.sep + "character.png").convert_alpha()
         XMLfile = ET.parse(XMLpath).getroot()
-        result = [[] for k in range(5)]
+        result = [[] for _ in range(5)]
         for data in XMLfile:
             name = data.attrib["name"]
             tempResult = ""
@@ -101,9 +101,7 @@ def offset_editor():
                     tempResult = "{0}{1}".format(tempResult, name[k])
                 if name[k] == " ":
                     temp = True
-            if tempResult == "":
-                tempResult = name
-            else:
+            if tempResult != "":
                 data.attrib["name"] = tempResult
         for data in XMLfile:
             name = data.attrib["name"]
@@ -139,7 +137,7 @@ def offset_editor():
         return result
 
     class Character:
-        def __init__(self, name, characterNum):
+        def __init__(self, name):
             if name != "None":
                 self.texture = getXmlData(name)
                 try:
@@ -159,8 +157,9 @@ def offset_editor():
                             for y in range(2):
                                 offset[k][x][y] *= -1
             else:
-                self.texture = [[Font30.render("", 1, (255, 255, 255))] for k in range(5)]
+                self.texture = [[Font30.render("", 1, (255, 255, 255))] for _ in range(5)]
 
+    # noinspection PyUnusedLocal
     def chooseDirectory(screen):
         display.toggle_fullscreen()
         folder_path = askdirectory(parent=root,
@@ -280,13 +279,13 @@ def offset_editor():
                                             tempPos = k
                                     for k in range(tempPos + 1, len(folderPath)):
                                         characterName = "{0}{1}".format(characterName, folderPath[k])
-                                    character = Character(folderPath, 1)
+                                    character = Character(folderPath)
                                     currentAnimation = 4
                                     currentFrame = 0
                                     try:
                                         offset = json.load(open(folderPath + os.path.sep + "offset.json"))["offset"]
                                     except:
-                                        offset = [[] for k in range(5)]
+                                        offset = [[] for _ in range(5)]
                                         for k in range(5):
                                             for x in range(len(character.texture[k])):
                                                 offset[k].append([0, 0])

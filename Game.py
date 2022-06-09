@@ -20,6 +20,8 @@ combo = 0
 bpm = 60000 / 100
 arrow1Alpha = 1
 arrow2Alpha = 1
+character1 = None
+character2 = None
 character1Alpha = 1
 character2Alpha = 1
 
@@ -38,6 +40,8 @@ def Main_game(musicName, options):
     global bpm
     global arrow1Alpha
     global arrow2Alpha
+    global character1
+    global character2
     global character1Alpha
     global character2Alpha
 
@@ -87,7 +91,7 @@ def Main_game(musicName, options):
 
         display.flip()
 
-    loadingscreen(0, 5, "Loading variables")
+    loadingscreen(0, 6, "Loading variables")
     # endregion
 
     # region variables
@@ -113,7 +117,7 @@ def Main_game(musicName, options):
 
     longNotesChart = []
 
-    opponentHitTimes = [-10 for k in range(4)]
+    opponentHitTimes = [-10 for _ in range(4)]
     opponentAnimation = ["Up", -10]
     playerAnimation = ["Up", -10]
 
@@ -140,54 +144,128 @@ def Main_game(musicName, options):
 
     # region images loading
     # region load images
-    loadingscreen(1, 5, "Loading textures")
+    loadingscreen(1, 6, "Loading textures")
 
-    arrowsSkins = [
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "left.png").convert_alpha(),
-            (150, 150)),
-        transform.scale(image.load(
-            "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "down.png").convert_alpha(),
-                        (150, 150)),
-        transform.scale(image.load(
-            "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "up.png").convert_alpha(),
-                        (150, 150)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Arrows" + os.path.sep + "right.png").convert_alpha(),
-            (150, 150))]
+    class arrowTexture:
+        def __init__(self, skinName):
+            self.arrowsSkins = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Arrows" + os.path.sep + "left.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(image.load(
+                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                        skinName) + os.path.sep + "Arrows" + os.path.sep + "down.png").convert_alpha(),
+                                (150, 150)),
+                transform.scale(image.load(
+                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                        skinName) + os.path.sep + "Arrows" + os.path.sep + "up.png").convert_alpha(),
+                                (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Arrows" + os.path.sep + "right.png").convert_alpha(),
+                    (150, 150))]
 
-    pressedArrowsSkins = [
-        transform.scale(
-            image.load(
-                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                    options.availableNoteStyles[
-                        options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "left.png").convert_alpha(),
-            (150, 150)),
-        transform.scale(
-            image.load(
-                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                    options.availableNoteStyles[
-                        options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "down.png").convert_alpha(),
-            (150, 150)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "up.png").convert_alpha(),
-            (150, 150)),
-        transform.scale(
-            image.load(
-                "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                    options.availableNoteStyles[
-                        options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "right.png").convert_alpha(),
-            (150, 150))]
+            self.pressedArrowsSkins = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "left.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "down.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "up.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "right.png").convert_alpha(),
+                    (150, 150))]
+
+            self.greyArrow = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "left.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "down.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "up.png").convert_alpha(),
+                    (150, 150)),
+                transform.scale(image.load(
+                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                        skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "right.png").convert_alpha(),
+                                (150, 150))]
+
+            self.longNotesImg = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "left.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "down.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "up.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "right.png").convert_alpha(),
+                    (52, 46))]
+
+            if options.downscroll:
+                for k in range(len(self.longNotesImg)):
+                    self.longNotesImg[k] = transform.flip(self.longNotesImg[k], False, True)
+
+            self.longNotesEnd = [
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "left.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "down.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "up.png").convert_alpha(),
+                    (52, 46)),
+                transform.scale(
+                    image.load(
+                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "right.png").convert_alpha(),
+                    (52, 46))]
+
+            if options.downscroll:
+                for k in range(len(self.longNotesEnd)):
+                    self.longNotesEnd[k] = transform.flip(self.longNotesEnd[k], False, True)
+
+    loadedArrowTextures = {"Main": arrowTexture(options.availableNoteStyles[options.selectedNoteStyle])}
+    loadedArrowTextures["Player"] = copy.copy(loadedArrowTextures["Main"])
+    loadedArrowTextures["Opponent"] = copy.copy(loadedArrowTextures["Main"])
 
     accuracyIndicatorImages = [
         transform.scale(image.load(
@@ -202,80 +280,6 @@ def Main_game(musicName, options):
         transform.scale(image.load(
             "assets" + os.path.sep + "Images" + os.path.sep + "Accuracy indicator" + os.path.sep + "shit.png").convert_alpha(),
                         (225, 100))]
-
-    greyArrow = [
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "left.png").convert_alpha(),
-            (150, 150)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "down.png").convert_alpha(),
-            (150, 150)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "up.png").convert_alpha(),
-            (150, 150)),
-        transform.scale(image.load(
-            "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "right.png").convert_alpha(),
-                        (150, 150))]
-
-    longNotesImg = [
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "left.png").convert_alpha(),
-            (52, 46)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "down.png").convert_alpha(),
-            (52, 46)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "up.png").convert_alpha(),
-            (52, 46)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "right.png").convert_alpha(),
-            (52, 46))]
-
-    if options.downscroll:
-        for k in range(len(longNotesImg)):
-            longNotesImg[k] = transform.flip(longNotesImg[k], False, True)
-
-    longNotesEnd = [
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "left.png").convert_alpha(),
-            (52, 46)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "down.png").convert_alpha(),
-            (52, 46)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "up.png").convert_alpha(),
-            (52, 46)),
-        transform.scale(
-            image.load("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                options.availableNoteStyles[
-                    options.selectedNoteStyle]) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "right.png").convert_alpha(),
-            (52, 46))]
-
-    if options.downscroll:
-        for k in range(len(longNotesEnd)):
-            longNotesEnd[k] = transform.flip(longNotesEnd[k], False, True)
 
     try:
         backgroundName = json.load(open(
@@ -321,7 +325,7 @@ def Main_game(musicName, options):
     accuracyIndicatorRect = accuracyIndicatorImages[0].get_rect()
     accuracyIndicatorRect.center = (middleScreen[0], middleScreen[1] - 75)
 
-    arrowRect = arrowsSkins[0].get_rect()
+    arrowRect = loadedArrowTextures["Main"].arrowsSkins[0].get_rect()
 
     deathScreenRect = BFdead.get_rect()
     deathScreenRect.midbottom = (middleScreen[0], display.Info().current_h - 50)
@@ -329,7 +333,7 @@ def Main_game(musicName, options):
 
     musicList = json.load(open("assets" + os.path.sep + "MusicList.json"))["musics"]
 
-    loadingscreen(2, 5, "Loading musics")
+    loadingscreen(2, 6, "Loading musics")
 
     # endregion
 
@@ -392,22 +396,24 @@ def Main_game(musicName, options):
     # endregion
 
     # region chart managment
-    loadingscreen(3, 5, "Loading chart")
+    loadingscreen(3, 6, "Loading chart")
 
     class Note:
-        def __init__(self, pos, column, side, length, noteId):
+        def __init__(self, pos, column, side, length, noteId, textureName):
             self.pos = pos
             self.column = column
             self.side = side
             self.length = length
             self.id = noteId
+            self.texture = textureName
 
     class LongNote:
-        def __init__(self, pos, column, side, isEnd):
+        def __init__(self, pos, column, side, isEnd, textureName):
             self.pos = pos
             self.column = column
             self.side = side
             self.isEnd = isEnd
+            self.texture = textureName
 
     class LongNoteGroup:
         def __init__(self, groupId):
@@ -515,7 +521,8 @@ def Main_game(musicName, options):
                             tempDirection = "Up"
                         if note[1] == 3 or note[1] == 7:
                             tempDirection = "Right"
-                notesChart.append(Note(note[0], tempDirection, tempUser, note[2], tempNoteId))
+                tempTextureName = tempUser
+                notesChart.append(Note(note[0], tempDirection, tempUser, note[2], tempNoteId, tempTextureName))
                 tempNoteId += 1
     # endregion
 
@@ -532,13 +539,13 @@ def Main_game(musicName, options):
 
     longNotesLen = 42 // options.selectedSpeed
     for note in notesChart:
-
         if note.length >= longNotesLen > 0 and int(round(note.length // longNotesLen)):
             tempGroup = LongNoteGroup(note.id)
             for k in range(1, int(round(note.length // longNotesLen))):
-                tempGroup.notes.append(LongNote(note.pos + k * longNotesLen, note.column, note.side, False))
+                tempGroup.notes.append(LongNote(note.pos + k * longNotesLen, note.column, note.side, False, note.side))
             tempGroup.notes.append(
-                LongNote(note.pos + (note.length // longNotesLen) * longNotesLen, note.column, note.side, True))
+                LongNote(note.pos + (note.length // longNotesLen) * longNotesLen, note.column, note.side, True,
+                         note.side))
             tempGroup.setSize()
             longNotesChart.append(tempGroup)
 
@@ -550,7 +557,7 @@ def Main_game(musicName, options):
     # endregion
 
     # region characters
-    loadingscreen(4, 5, "Loading characters")
+    loadingscreen(4, 6, "Loading characters")
 
     def getAttibuteRect(data):
         return Rect(float(data.attrib["x"]), float(data.attrib["y"]), float(data.attrib["width"]),
@@ -578,7 +585,7 @@ def Main_game(musicName, options):
             "assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(
                 characterName) + os.path.sep + "character.png").convert_alpha()
         XMLfile = ET.parse(XMLpath).getroot()
-        result = [[] for k in range(5)]
+        result = [[] for _ in range(5)]
         for data in XMLfile:
             name = data.attrib["name"]
             tempResult = ""
@@ -597,9 +604,7 @@ def Main_game(musicName, options):
                     tempResult = "{0}{1}".format(tempResult, name[k])
                 if name[k] == " ":
                     temp = True
-            if tempResult == "":
-                tempResult = name
-            else:
+            if tempResult != "":
                 data.attrib["name"] = tempResult
         for data in XMLfile:
             name = data.attrib["name"]
@@ -635,7 +640,7 @@ def Main_game(musicName, options):
         return result
 
     class Character:
-        def __init__(self, name, characterNum):
+        def __init__(self, name, characterNum, loadedFromModchart=False):
             if name != "None":
                 if options.playAs == "Opponent":
                     if characterNum == 1:
@@ -645,10 +650,14 @@ def Main_game(musicName, options):
                 else:
                     temp = characterNum
                 # Load size and texture
-                self.size = \
-                    json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                        musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
-                        "size"]
+                if not loadedFromModchart:
+                    self.size = \
+                        json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
+                            "size"]
+                else:
+                    self.size = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                        musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name]["size"]
                 # Parse XML file and get texture based on XML indications
                 self.texture = getXmlData(name)
                 # Get offset
@@ -657,7 +666,7 @@ def Main_game(musicName, options):
                         "assets" + os.path.sep + "Images" + os.path.sep + "Characters" + os.path.sep + "{0}".format(
                             name) + os.path.sep + "offset.json"))["offset"]
                 except:
-                    self.offset = [[] for k in range(5)]
+                    self.offset = [[] for _ in range(5)]
                     for k in range(5):
                         for x in range(len(self.texture[k])):
                             self.offset[k].append([0, 0])
@@ -673,22 +682,37 @@ def Main_game(musicName, options):
                         self.offset[k][x][0] *= self.size[k][0]
                         self.offset[k][x][1] *= self.size[k][1]
                 # Get pos
-                self.pos = \
-                    json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                        musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
-                        "pos"]
+                if not loadedFromModchart:
+                    self.pos = \
+                        json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["character{0}".format(temp)][
+                            "pos"]
+                else:
+                    self.pos = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                        musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name]["pos"]
                 # Handle centered character
                 try:
-                    self.isCentered = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                        musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)]["isCentered"]
+                    if not loadedFromModchart:
+                        self.isCentered = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)][
+                            "isCentered"]
+                    else:
+                        self.isCenterd = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                            musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name]["isCentered"]
                 except:
-                    self.isCentered = "False"
+                    self.isCentered = ["False", "False"]
                 if self.isCentered[0] == "True" or self.isCentered[1] == "True":
                     try:
-                        self.centeredOffset = json.load(open(
-                            "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                                musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)][
-                            "centeredOffset"]
+                        if not loadedFromModchart:
+                            self.centeredOffset = json.load(open(
+                                "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                                    musicName) + os.path.sep + "songData.json"))["character{0}".format(characterNum)][
+                                "centeredOffset"]
+                        else:
+                            self.centeredOffset = json.load(open(
+                                "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                                    musicName) + os.path.sep + "songData.json"))["modchartCharacters"][name][
+                                "centeredOffset"]
                     except:
                         self.centeredOffset = [0, 0]
                     if characterNum == 1:
@@ -734,15 +758,17 @@ def Main_game(musicName, options):
                             int(self.texture[k][x].get_height() * self.size[k][1])))
             # Handle no character
             else:
-                self.texture = [[Font40.render("", 1, (255, 255, 255))] for k in range(5)]
-                self.pos = [[[0, 0]] for k in range(5)]
+                self.texture = [[Font40.render("", 1, (255, 255, 255))] for _ in range(5)]
+                self.pos = [[[0, 0]] for _ in range(5)]
 
     # Load characters
     if options.playAs == "Player":
         try:
-            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
             try:
-                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
             except:
                 alias = None
             if alias is None:
@@ -758,9 +784,19 @@ def Main_game(musicName, options):
                 print(e)
             character1 = Character("None", 1)
         try:
-            character2 = Character(
-                json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character2"]["Name"], 2)
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character2"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character2"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 2)
+                character2 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 2)
+                character2 = loadedCharacters[alias]
         except:
             print("Player character loading failed, skipping loading")
             if options.debugMode:
@@ -769,9 +805,19 @@ def Main_game(musicName, options):
             character2 = Character("None", 2)
     else:
         try:
-            character1 = Character(
-                json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character2"]["Name"], 1)
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 1)
+                character1 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 1)
+                character1 = loadedCharacters[alias]
         except error as e:
             print("Opponent character loading failed, skipping loading")
             if options.debugMode:
@@ -779,9 +825,19 @@ def Main_game(musicName, options):
                 print(e)
             character1 = Character("None", 1)
         try:
-            character2 = Character(
-                json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character1"]["Name"], 2)
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character2"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character2"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 2)
+                character2 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 2)
+                character2 = loadedCharacters[alias]
         except error as e:
             print("Player character loading failed, skipping loading")
             if options.debugMode:
@@ -797,7 +853,7 @@ def Main_game(musicName, options):
     # endregion
 
     # region screen and notes update
-    loadingscreen(5, 5, "Finishing...")
+    loadingscreen(5, 6, "Loading modcharts ressources")
 
     def drawGreyNotes():
         width = display.Info().current_w
@@ -810,11 +866,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomright = (width - 540, height - 50)
             if K_a in keyPressed or K_LEFT in keyPressed:
-                temp1 = copy.copy(pressedArrowsSkins[0])
+                temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[0])
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(greyArrow[0])
+                temp1 = copy.copy(loadedArrowTextures["Player"].greyArrow[0]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
             temp = arrowRect
@@ -823,11 +879,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomright = (width - 380, height - 50)
             if K_s in keyPressed or K_DOWN in keyPressed:
-                temp1 = copy.copy(pressedArrowsSkins[1])
+                temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[1]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(greyArrow[1])
+                temp1 = copy.copy(loadedArrowTextures["Player"].greyArrow[1]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
             temp = arrowRect
@@ -836,11 +892,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomright = (width - 220, height - 50)
             if K_w in keyPressed or K_UP in keyPressed:
-                temp1 = copy.copy(pressedArrowsSkins[2])
+                temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[2]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(greyArrow[2])
+                temp1 = copy.copy(loadedArrowTextures["Player"].greyArrow[2]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
             temp = arrowRect
@@ -849,11 +905,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomright = (width - 60, height - 50)
             if K_d in keyPressed or K_RIGHT in keyPressed:
-                temp1 = copy.copy(pressedArrowsSkins[3])
+                temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[3]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(greyArrow[3])
+                temp1 = copy.copy(loadedArrowTextures["Player"].greyArrow[3]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
         if not singlePlayer and "hideNotes1" not in modifications:
@@ -863,11 +919,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomleft = (60, height - 50)
             if currentTime - opponentHitTimes[0] > 0.15:
-                temp1 = copy.copy(greyArrow[0])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[0]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(pressedArrowsSkins[0])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].pressedArrowsSkins[0]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
             temp = arrowRect
@@ -876,11 +932,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomleft = (220, height - 50)
             if currentTime - opponentHitTimes[1] > 0.15:
-                temp1 = copy.copy(greyArrow[1])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[1]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(pressedArrowsSkins[1])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].pressedArrowsSkins[1]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
             temp = arrowRect
@@ -889,11 +945,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomleft = (380, height - 50)
             if currentTime - opponentHitTimes[2] > 0.15:
-                temp1 = copy.copy(greyArrow[2])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[2]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(pressedArrowsSkins[2])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].pressedArrowsSkins[2]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
             temp = arrowRect
@@ -902,11 +958,11 @@ def Main_game(musicName, options):
             else:
                 temp.bottomleft = (540, height - 50)
             if currentTime - opponentHitTimes[3] > 0.15:
-                temp1 = copy.copy(greyArrow[3])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[3]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
             else:
-                temp1 = copy.copy(pressedArrowsSkins[3])
+                temp1 = copy.copy(loadedArrowTextures["Opponent"].pressedArrowsSkins[3]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
 
@@ -948,7 +1004,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = copy.copy(arrowsSkins[1])
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[1]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Left":
@@ -958,7 +1014,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = arrowsSkins[0]
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[0]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Up":
@@ -968,7 +1024,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = copy.copy(arrowsSkins[2])
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[2]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Right":
@@ -978,7 +1034,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomleft = (
                                     540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = copy.copy(arrowsSkins[3])
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[3]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                     if "hideNotes2" not in modifications:
@@ -990,7 +1046,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = copy.copy(arrowsSkins[1])
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[1]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Left":
@@ -1001,7 +1057,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = copy.copy(arrowsSkins[0])
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[0]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Up":
@@ -1012,7 +1068,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = copy.copy(arrowsSkins[2])
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[2]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Right":
@@ -1023,7 +1079,7 @@ def Main_game(musicName, options):
                             else:
                                 temp.bottomright = (
                                     width - 60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
-                            temp1 = copy.copy(arrowsSkins[3])
+                            temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[3]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
 
@@ -1048,7 +1104,6 @@ def Main_game(musicName, options):
                 deleteGroup = True
             if run and 50 + (noteGroup.notes[0].pos - currentTime * 1000) * options.selectedSpeed < height + 100:
                 for longNote in noteGroup.notes:
-                    transparent = False
                     if currentTime * 1000 - 133 >= longNote.pos:
                         if longNote.side == "Player":
                             if (noteGroup.size - len(noteGroup.notes)) / noteGroup.size >= 0.75:
@@ -1097,11 +1152,11 @@ def Main_game(musicName, options):
                                             220 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(longNotesEnd[1])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[1]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(longNotesImg[1])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[1]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                 if longNote.column == "Left":
@@ -1114,11 +1169,11 @@ def Main_game(musicName, options):
                                             60 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(longNotesEnd[0])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[0]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(longNotesImg[0])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[0]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                 if longNote.column == "Up":
@@ -1132,11 +1187,11 @@ def Main_game(musicName, options):
                                             380 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(longNotesEnd[2])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[2]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(longNotesImg[2])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[2]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                 if longNote.column == "Right":
@@ -1150,11 +1205,11 @@ def Main_game(musicName, options):
                                             540 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(longNotesEnd[3])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[3]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(longNotesImg[3])
+                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[3]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                             if longNote.side == "Player" and "hideNotes2" not in modifications:
@@ -1169,9 +1224,9 @@ def Main_game(musicName, options):
                                             width - 220 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(longNotesEnd[2])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[2]).convert_alpha()
                                     else:
-                                        img = copy.copy(longNotesImg[2])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[2]).convert_alpha()
                                     if arrow2Alpha:
                                         if transparent:
                                             img.set_alpha(100)
@@ -1189,9 +1244,9 @@ def Main_game(musicName, options):
                                             width - 380 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(longNotesEnd[1])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[1]).convert_alpha()
                                     else:
-                                        img = copy.copy(longNotesImg[1])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[1]).convert_alpha()
                                     if arrow2Alpha == 1:
                                         if transparent:
                                             img.set_alpha(100)
@@ -1209,9 +1264,9 @@ def Main_game(musicName, options):
                                             width - 540 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(longNotesEnd[0])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[0]).convert_alpha()
                                     else:
-                                        img = copy.copy(longNotesImg[0])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[0]).convert_alpha()
                                     if arrow2Alpha == 1:
                                         if transparent:
                                             img.set_alpha(100)
@@ -1229,9 +1284,9 @@ def Main_game(musicName, options):
                                             width - 60 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(longNotesEnd[3])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[3]).convert_alpha()
                                     else:
-                                        img = copy.copy(longNotesImg[3])
+                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[3]).convert_alpha()
                                     if arrow2Alpha == 1:
                                         if transparent:
                                             img.set_alpha(100)
@@ -1426,6 +1481,8 @@ def Main_game(musicName, options):
                 self.isActive = False
 
     def update_modifications(modifications, dynamic_modifications):
+        global character1
+        global character2
         currentTime = Time.time() - startTime
         currentTime *= 1000
         for mod in dynamic_modifications:
@@ -1458,10 +1515,38 @@ def Main_game(musicName, options):
                     temp = 0
                 if currentTime >= temp:
                     if mod["player"] == 1:
-                        transitionValuesList.append(transitionValue("character1Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                        transitionValuesList.append(
+                            transitionValue("character1Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
+                                            mod["endTime"]))
                     if mod["player"] == 2:
-                        transitionValuesList.append(transitionValue("character2Alpha", mod["startValue"], mod["endValue"], mod["startTime"], mod["endTime"]))
+                        transitionValuesList.append(
+                            transitionValue("character2Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
+                                            mod["endTime"]))
                     dynamic_modifications.remove(mod)
+            if mod["type"] == "changeCharacter":
+                try:
+                    temp = mod["pos"]
+                except:
+                    temp = 0
+                if currentTime >= temp:
+                    if mod["player"] == 1:
+                        character1 = loadedCharacters[mod["name"]]
+                    elif mod["player"] == 2:
+                        character2 = loadedCharacters[mod["name"]]
+                    dynamic_modifications.remove(mod)
+            if mod["type"] == "changeArrowTexture":
+                try:
+                    temp = mod["pos"]
+                except:
+                    temp = 0
+                if currentTime >= temp:
+                    if mod["player"] == 1:
+                        loadedArrowTextures["Opponent"] = loadedArrowTextures[mod["name"]]
+                    elif mod["player"] == 2:
+                        loadedArrowTextures["Player"] = loadedArrowTextures[mod["name"]]
+                    dynamic_modifications.remove(mod)
+            if mod["type"] == "Organiser":
+                update_modifications(modifications, mod["modchart"])
 
     def update_transitionValue():
         for element in transitionValuesList:
@@ -1469,28 +1554,23 @@ def Main_game(musicName, options):
             if not element.isActive:
                 transitionValuesList.remove(element)
 
-    def is_in_modifications(attribute, type):
-        if type == "str":
-            return attribute in modifications
-        if type == "list":
-            for element in modifications:
-                if type(element) == list:
-                    for tempAttribute in element:
-                        if tempAttribute == attribute:
-                            return True
-            return False
-        if type == "dict":
-            for element in modifications:
-                if type(element) == dict:
-                    if attribute in element.keys:
-                        return True
-            return False
-        if type == "dictName":
-            for element in modifications:
-                if type(element) == dict and element["name"] == attribute:
-                    return True
-            return False
+    def modchartLoading():
+        for mod in dynamic_modifications:
+            if mod["type"] == "characterLoading":
+                try:
+                    alias = mod["alias"]
+                except:
+                    alias = None
+                if alias is None:
+                    loadedCharacters[mod["name"]] = Character(mod["name"], mod["player"], True)
+                else:
+                    loadedCharacters[mod["alias"]] = Character(mod["name"], mod["player"], True)
+            if mod["type"] == "arrowTextureLoading":
+                loadedArrowTextures[mod["loadedName"]] = arrowTexture(mod["textureName"])
 
+    modchartLoading()
+
+    loadingscreen(6, 6, "Finishing...")
     # endregion
 
     keyPressed = []
