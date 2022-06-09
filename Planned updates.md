@@ -17,10 +17,10 @@ v1.8:
 - [X] Remove hard-coded arrow textures to use general programming (arrowTexture object)  
 - [X] Simple modcharts can now change the arrow skins in-game
 - [X] Improving performance by using .convert_alpha() when displaying arrows using custom alpha values  
-- [ ] Modcharts (WIP, see wiki [here](https://github.com/EndersteveGamer/Friday-night-funkin-with-Pygame/wiki/Modding-guide-page))  
-- [ ] Maybe notes color customisation?  
 
 Future things with no defined update:
   - Adding all animated backgrounds
   - Adding multiple note types
   - Main menu rework
+  - Notes color customisation
+  - Add more modchart features
