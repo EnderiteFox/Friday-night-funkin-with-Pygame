@@ -85,6 +85,7 @@ The game is now available as a .exe file! (Took me 3 days to figure out how to d
   - Control the alpha of characters
   - Change characters in-game
   - Change the arrow skin in-game
+- The simple modcharts wiki is [here](https://github.com/EndersteveGamer/Friday-night-funkin-with-Pygame/wiki/How-to-use-simple-modcharts)
 - Added all mid-song alpha changes using modcharts
 - Added all mid-song character changes using modcharts (in Sorrow and Satisfracture)
 - Fixed the "You can't run" song
