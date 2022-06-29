@@ -3,7 +3,7 @@ This is just Friday Night Funkin, but coded in Python using the Pygame library
 Download latest version to play: https://www.mediafire.com/folder/viiyk6xdjiyhx/FNF_in_python
 The game is now available as a .exe file, no more installing Python and Pygame!
 
-[Latest Python version](https://www.mediafire.com/file/8dibptg5tt6melw/FNF_in_Python_V1.8.1_PYTHON.zip/file)
+[Latest Python version](https://www.mediafire.com/file/8dibptg5tt6melw/FNF_in_Python_V1.8.1_PYTHON.zip/file)  
 [Latest EXE version](https://www.mediafire.com/file/88n84s1e027cfn6/FNF_in_Python_V1.8.1_EXE.zip/file)
 
 Current version: 1.8.1
