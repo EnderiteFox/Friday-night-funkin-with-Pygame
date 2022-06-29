@@ -292,7 +292,7 @@ def offset_editor():
                             except:
                                 print("An error occurred while loading the files")
         if keyModifier == "Shift":
-            if Time.time() - lastPressed > 0.1:
+            if Time.time() - lastPressed > 0.05:
                 if K_UP in pressedList:
                     offset[currentAnimation][currentFrame][1] += 1
                     lastPressed = Time.time()

@@ -146,119 +146,91 @@ def Main_game(musicName, options):
     # region load images
     loadingscreen(1, 6, "Loading textures")
 
+    def getAttibuteRect(data):
+        return Rect(float(data.attrib["x"]), float(data.attrib["y"]), float(data.attrib["width"]),
+                    float(data.attrib["height"]))
+
+    def loadArrows(skinName):
+        skinData = json.load(open("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowData.json"))
+        XMLPath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowSkin.xml"
+        XMLFile = ET.parse(XMLPath).getroot()
+        imagePath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowSkin.png"
+        skinImage = image.load(imagePath).convert_alpha()
+        result = {"arrowsSkin": [None for k in range(4)], "pressedArrowsSkins": [None for k in range(4)], "greyArrow": [None for k in range(4)], "longNotesImg": [None for k in range(4)], "longNotesEnd": [None for k in range(4)]}
+        tempArrows = ["purple alone0000", "blue alone0000", "green alone0000", "red alone0000"]
+        tempPressed = ["left press0000", "down press0000", "up press0000", "right press0000"]
+        tempGrey = ["arrowLEFT0000", "arrowDOWN0000", "arrowUP0000", "arrowRIGHT0000"]
+        tempLong = ["purple hold0000", "blue hold0000", "green hold0000", "red hold0000"]
+        tempLongEnd = ["purple tail0000", "blue tail0000", "green tail0000", "red tail0000"]
+        for data in XMLFile:
+            if data.attrib["name"] in tempArrows:
+                try:
+                    temp = skinData["Size"]["arrowsSkin"][tempArrows.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["arrowsSkin"][tempArrows.index(data.attrib["name"])] = tempImage
+            if data.attrib["name"] in tempPressed:
+                try:
+                    temp = skinData["Size"]["pressedArrowsSkin"][tempPressed.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["pressedArrowsSkins"][tempPressed.index(data.attrib["name"])] = tempImage
+            if data.attrib["name"] in tempGrey:
+                try:
+                    temp = skinData["Size"]["greyArrow"][tempGrey.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["greyArrow"][tempGrey.index(data.attrib["name"])] = tempImage
+            if data.attrib["name"] in tempLong:
+                try:
+                    temp = skinData["Size"]["greyArrow"][tempLong.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["longNotesImg"][tempLong.index(data.attrib["name"])] = tempImage
+            if data.attrib["name"] in tempLongEnd:
+                try:
+                    temp = skinData["Size"]["greyArrow"][tempLongEnd.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["longNotesEnd"][tempLongEnd.index(data.attrib["name"])] = tempImage
+        return result
+
     class arrowTexture:
         def __init__(self, skinName):
-            self.arrowsSkins = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Arrows" + os.path.sep + "left.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(image.load(
-                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                        skinName) + os.path.sep + "Arrows" + os.path.sep + "down.png").convert_alpha(),
-                                (150, 150)),
-                transform.scale(image.load(
-                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                        skinName) + os.path.sep + "Arrows" + os.path.sep + "up.png").convert_alpha(),
-                                (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Arrows" + os.path.sep + "right.png").convert_alpha(),
-                    (150, 150))]
-
-            self.pressedArrowsSkins = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "left.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "down.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "up.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "right.png").convert_alpha(),
-                    (150, 150))]
-
-            self.greyArrow = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "left.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "down.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "up.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(image.load(
-                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                        skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "right.png").convert_alpha(),
-                                (150, 150))]
-
-            self.longNotesImg = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "left.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "down.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "up.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "right.png").convert_alpha(),
-                    (52, 46))]
-
+            temp = loadArrows(skinName)
+            self.arrowsSkins = temp["arrowsSkin"]
+            for k in range(4):
+                if self.arrowsSkins[k] is None:
+                    self.arrowsSkins[k] = Surface((0, 0))
+            self.pressedArrowsSkins = temp["pressedArrowsSkins"]
+            for k in range(4):
+                if self.pressedArrowsSkins[k] is None:
+                    self.pressedArrowsSkins[k] = Surface((0, 0))
+            self.greyArrow = temp["greyArrow"]
+            for k in range(4):
+                if self.greyArrow[k] is None:
+                    self.greyArrow[k] = Surface((0, 0))
+            self.longNotesImg = temp["longNotesImg"]
+            for k in range(4):
+                if self.longNotesImg[k] is None:
+                    self.longNotesImg[k] = Surface((0, 0))
             if options.downscroll:
                 for k in range(len(self.longNotesImg)):
                     self.longNotesImg[k] = transform.flip(self.longNotesImg[k], False, True)
-
-            self.longNotesEnd = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "left.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "down.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "up.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "right.png").convert_alpha(),
-                    (52, 46))]
-
+            self.longNotesEnd = temp["longNotesEnd"]
+            for k in range(4):
+                if self.longNotesEnd[k] is None:
+                    self.longNotesEnd[k] = Surface((0, 0))
             if options.downscroll:
                 for k in range(len(self.longNotesEnd)):
                     self.longNotesEnd[k] = transform.flip(self.longNotesEnd[k], False, True)
@@ -537,7 +509,7 @@ def Main_game(musicName, options):
     for k in range(temp):
         notesChart.remove(None)
 
-    longNotesLen = 42 // options.selectedSpeed
+    longNotesLen = 41 // options.selectedSpeed
     for note in notesChart:
         if note.length >= longNotesLen > 0 and int(round(note.length // longNotesLen)):
             tempGroup = LongNoteGroup(note.id)
@@ -558,10 +530,6 @@ def Main_game(musicName, options):
 
     # region characters
     loadingscreen(4, 6, "Loading characters")
-
-    def getAttibuteRect(data):
-        return Rect(float(data.attrib["x"]), float(data.attrib["y"]), float(data.attrib["width"]),
-                    float(data.attrib["height"]))
 
     def getNfirstCharacters(text, n):
         result = ""
@@ -860,11 +828,14 @@ def Main_game(musicName, options):
         height = display.Info().current_h
         currentTime = Time.time() - startTime
         if "hideNotes2" not in modifications:
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topright = (width - 540, 50)
+            if K_a in keyPressed or K_LEFT in keyPressed:
+                temp = loadedArrowTextures["Player"].pressedArrowsSkins[0].get_rect()
             else:
-                temp.bottomright = (width - 540, height - 50)
+                temp = loadedArrowTextures["Player"].greyArrow[0].get_rect()
+            if not options.downscroll:
+                temp.center = (width - 615, 125)
+            else:
+                temp.center = (width - 615, height - 125)
             if K_a in keyPressed or K_LEFT in keyPressed:
                 temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[0])
                 temp1.set_alpha(arrow2Alpha * 255)
@@ -873,11 +844,14 @@ def Main_game(musicName, options):
                 temp1 = copy.copy(loadedArrowTextures["Player"].greyArrow[0]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topright = (width - 380, 50)
+            if K_s in keyPressed or K_DOWN in keyPressed:
+                temp = loadedArrowTextures["Player"].pressedArrowsSkins[1].get_rect()
             else:
-                temp.bottomright = (width - 380, height - 50)
+                temp = loadedArrowTextures["Player"].greyArrow[1].get_rect()
+            if not options.downscroll:
+                temp.center = (width - 455, 125)
+            else:
+                temp.center = (width - 455, height - 125)
             if K_s in keyPressed or K_DOWN in keyPressed:
                 temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[1]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
@@ -886,11 +860,14 @@ def Main_game(musicName, options):
                 temp1 = copy.copy(loadedArrowTextures["Player"].greyArrow[1]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topright = (width - 220, 50)
+            if K_w in keyPressed or K_UP in keyPressed:
+                temp = loadedArrowTextures["Player"].pressedArrowsSkins[2].get_rect()
             else:
-                temp.bottomright = (width - 220, height - 50)
+                temp = loadedArrowTextures["Player"].greyArrow[2].get_rect()
+            if not options.downscroll:
+                temp.center = (width - 295, 125)
+            else:
+                temp.center = (width - 295, height - 125)
             if K_w in keyPressed or K_UP in keyPressed:
                 temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[2]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
@@ -899,11 +876,14 @@ def Main_game(musicName, options):
                 temp1 = copy.copy(loadedArrowTextures["Player"].greyArrow[2]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topright = (width - 60, 50)
+            if K_d in keyPressed or K_RIGHT in keyPressed:
+                temp = loadedArrowTextures["Player"].pressedArrowsSkins[3].get_rect()
             else:
-                temp.bottomright = (width - 60, height - 50)
+                temp = loadedArrowTextures["Player"].greyArrow[3].get_rect()
+            if not options.downscroll:
+                temp.center = (width - 135, 125)
+            else:
+                temp.center = (width - 135, height - 125)
             if K_d in keyPressed or K_RIGHT in keyPressed:
                 temp1 = copy.copy(loadedArrowTextures["Player"].pressedArrowsSkins[3]).convert_alpha()
                 temp1.set_alpha(arrow2Alpha * 255)
@@ -913,11 +893,14 @@ def Main_game(musicName, options):
                 temp1.set_alpha(arrow2Alpha * 255)
                 screen.blit(temp1, temp)
         if not singlePlayer and "hideNotes1" not in modifications:
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topleft = (60, 50)
+            if currentTime - opponentHitTimes[0] > 0.15:
+                temp = loadedArrowTextures["Opponent"].greyArrow[0].get_rect()
             else:
-                temp.bottomleft = (60, height - 50)
+                temp = loadedArrowTextures["Opponent"].pressedArrowsSkins[0].get_rect()
+            if not options.downscroll:
+                temp.center = (135, 125)
+            else:
+                temp.center = (135, height - 125)
             if currentTime - opponentHitTimes[0] > 0.15:
                 temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[0]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
@@ -926,11 +909,14 @@ def Main_game(musicName, options):
                 temp1 = copy.copy(loadedArrowTextures["Opponent"].pressedArrowsSkins[0]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topleft = (220, 50)
+            if currentTime - opponentHitTimes[1] > 0.15:
+                temp = loadedArrowTextures["Opponent"].greyArrow[1].get_rect()
             else:
-                temp.bottomleft = (220, height - 50)
+                temp = loadedArrowTextures["Opponent"].pressedArrowsSkins[1].get_rect()
+            if not options.downscroll:
+                temp.center = (295, 125)
+            else:
+                temp.center = (295, height - 125)
             if currentTime - opponentHitTimes[1] > 0.15:
                 temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[1]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
@@ -939,11 +925,14 @@ def Main_game(musicName, options):
                 temp1 = copy.copy(loadedArrowTextures["Opponent"].pressedArrowsSkins[1]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topleft = (380, 50)
+            if currentTime - opponentHitTimes[2] > 0.15:
+                temp = loadedArrowTextures["Opponent"].greyArrow[2].get_rect()
             else:
-                temp.bottomleft = (380, height - 50)
+                temp = loadedArrowTextures["Opponent"].pressedArrowsSkins[2].get_rect()
+            if not options.downscroll:
+                temp.center = (455, 125)
+            else:
+                temp.center = (455, height - 125)
             if currentTime - opponentHitTimes[2] > 0.15:
                 temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[2]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
@@ -952,11 +941,14 @@ def Main_game(musicName, options):
                 temp1 = copy.copy(loadedArrowTextures["Opponent"].pressedArrowsSkins[2]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
                 screen.blit(temp1, temp)
-            temp = arrowRect
-            if not options.downscroll:
-                temp.topleft = (540, 50)
+            if currentTime - opponentHitTimes[3] > 0.15:
+                temp = loadedArrowTextures["Opponent"].greyArrow[3].get_rect()
             else:
-                temp.bottomleft = (540, height - 50)
+                temp = loadedArrowTextures["Opponent"].pressedArrowsSkins[3].get_rect()
+            if not options.downscroll:
+                temp.center = (615, 125)
+            else:
+                temp.center = (615, height - 125)
             if currentTime - opponentHitTimes[3] > 0.15:
                 temp1 = copy.copy(loadedArrowTextures["Opponent"].greyArrow[3]).convert_alpha()
                 temp1.set_alpha(arrow1Alpha * 255)
@@ -998,87 +990,87 @@ def Main_game(musicName, options):
                 if 50 + (note.pos - currentTime * 1000) * options.selectedSpeed < display.Info().current_h + 100:
                     if not singlePlayer and "hideNotes1" not in modifications:
                         if note.side == "Opponent" and note.column == "Down":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[1].get_rect()
                             if not options.downscroll:
-                                temp.topleft = (220, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (295, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (
-                                    220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    295, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[1]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Left":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[0].get_rect()
                             if not options.downscroll:
-                                temp.topleft = (60, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (135, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (
-                                    60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    135, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[0]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Up":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[2].get_rect()
                             if not options.downscroll:
-                                temp.topleft = (380, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (455, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (
-                                    380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    455, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[2]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Opponent" and note.column == "Right":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[3].get_rect()
                             if not options.downscroll:
-                                temp.topleft = (540, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (615, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomleft = (
-                                    540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    615, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[3]).convert_alpha()
                             temp1.set_alpha(arrow1Alpha * 255)
                             screen.blit(temp1, temp)
                     if "hideNotes2" not in modifications:
                         if note.side == "Player" and note.column == "Down":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[1].get_rect()
                             if not options.downscroll:
-                                temp.topright = (
-                                    width - 380, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 455, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (
-                                    width - 380, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 455, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[1]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Left":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[0].get_rect()
                             if not options.downscroll:
-                                temp.topright = (
-                                    width - 540, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 615, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (
-                                    width - 540, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 615, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[0]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Up":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[2].get_rect()
                             if not options.downscroll:
-                                temp.topright = (
-                                    width - 220, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 295, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (
-                                    width - 220, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 295, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[2]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
                         elif note.side == "Player" and note.column == "Right":
-                            temp = arrowRect
+                            temp = loadedArrowTextures[note.texture].arrowsSkins[3].get_rect()
                             if not options.downscroll:
-                                temp.topright = (
-                                    width - 60, 50 + (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 135, 125 + (note.pos - currentTime * 1000) * options.selectedSpeed)
                             else:
-                                temp.bottomright = (
-                                    width - 60, height - 50 - (note.pos - currentTime * 1000) * options.selectedSpeed)
+                                temp.center = (
+                                    width - 135, height - 125 - (note.pos - currentTime * 1000) * options.selectedSpeed)
                             temp1 = copy.copy(loadedArrowTextures[note.texture].arrowsSkins[3]).convert_alpha()
                             temp1.set_alpha(arrow2Alpha * 255)
                             screen.blit(temp1, temp)
