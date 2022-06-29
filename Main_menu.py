@@ -4,6 +4,7 @@ from random import *
 from Game import Main_game
 import os
 from Offset_editor import offset_editor
+from Arrow_editor import arrow_editor
 
 init()
 
