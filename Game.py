@@ -151,142 +151,86 @@ def Main_game(musicName, options):
                     float(data.attrib["height"]))
 
     def loadArrows(skinName):
+        skinData = json.load(open("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowData.json"))
         XMLPath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowSkin.xml"
         XMLFile = ET.parse(XMLPath).getroot()
         imagePath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowSkin.png"
         skinImage = image.load(imagePath).convert_alpha()
-        result = {"arrowsSkin": [], "pressedArrowsSkins": [], "greyArrow": [], "longNotesImg": [], "longNotesEnd": []}
+        result = {"arrowsSkin": [None for k in range(4)], "pressedArrowsSkins": [None for k in range(4)], "greyArrow": [None for k in range(4)], "longNotesImg": [None for k in range(4)], "longNotesEnd": [None for k in range(4)]}
         tempArrows = ["purple alone0000", "blue alone0000", "green alone0000", "red alone0000"]
         tempPressed = ["left press0000", "down press0000", "up press0000", "right press0000"]
         tempGrey = ["arrowLEFT0000", "arrowDOWN0000", "arrowUP0000", "arrowRIGHT0000"]
-        tempLong = ["purple long0000", "blue long0000", "green long0000", "red long0000"]
+        tempLong = ["purple hold0000", "blue hold0000", "green hold0000", "red hold0000"]
         tempLongEnd = ["purple tail0000", "blue tail0000", "green tail0000", "red tail0000"]
         for data in XMLFile:
             if data.attrib["name"] in tempArrows:
-                result["arrowsSkin"][tempArrows.index(data.attrib["name"])] = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                try:
+                    temp = skinData["Size"]["arrowsSkin"][tempArrows.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["arrowsSkin"][tempArrows.index(data.attrib["name"])] = tempImage
             if data.attrib["name"] in tempPressed:
-                result["pressedArrowsSkins"][tempPressed.index(data.attrib["name"])] = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                try:
+                    temp = skinData["Size"]["pressedArrowsSkin"][tempPressed.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["pressedArrowsSkins"][tempPressed.index(data.attrib["name"])] = tempImage
             if data.attrib["name"] in tempGrey:
-                result["greyArrow"][tempGrey.index(data.attrib["name"])] = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                try:
+                    temp = skinData["Size"]["greyArrow"][tempGrey.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["greyArrow"][tempGrey.index(data.attrib["name"])] = tempImage
             if data.attrib["name"] in tempLong:
-                result["longNotesImg"][tempLong.index(data.attrib["name"])] = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                try:
+                    temp = skinData["Size"]["greyArrow"][tempLong.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["longNotesImg"][tempLong.index(data.attrib["name"])] = tempImage
             if data.attrib["name"] in tempLongEnd:
-                result["longNotesEnd"][tempLongEnd.index(data.attrib["name"])] = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                try:
+                    temp = skinData["Size"]["greyArrow"][tempLongEnd.index(data.attrib["name"])]
+                except:
+                    temp = 1
+                tempImage = skinImage.subsurface(getAttibuteRect(data)).convert_alpha()
+                tempImage = transform.scale(tempImage, (tempImage.get_width() * temp, tempImage.get_height() * temp))
+                result["longNotesEnd"][tempLongEnd.index(data.attrib["name"])] = tempImage
         return result
 
     class arrowTexture:
         def __init__(self, skinName):
-            self.arrowsSkins = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Arrows" + os.path.sep + "left.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(image.load(
-                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                        skinName) + os.path.sep + "Arrows" + os.path.sep + "down.png").convert_alpha(),
-                                (150, 150)),
-                transform.scale(image.load(
-                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                        skinName) + os.path.sep + "Arrows" + os.path.sep + "up.png").convert_alpha(),
-                                (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Arrows" + os.path.sep + "right.png").convert_alpha(),
-                    (150, 150))]
-
-            self.pressedArrowsSkins = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "left.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "down.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "up.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Pressed" + os.path.sep + "right.png").convert_alpha(),
-                    (150, 150))]
-
-            self.greyArrow = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "left.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "down.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "up.png").convert_alpha(),
-                    (150, 150)),
-                transform.scale(image.load(
-                    "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                        skinName) + os.path.sep + "Strum lines" + os.path.sep + "Static" + os.path.sep + "right.png").convert_alpha(),
-                                (150, 150))]
-
-            self.longNotesImg = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "left.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "down.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "up.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "Middle" + os.path.sep + "right.png").convert_alpha(),
-                    (52, 46))]
-
+            temp = loadArrows(skinName)
+            self.arrowsSkins = temp["arrowsSkin"]
+            for k in range(4):
+                if self.arrowsSkins[k] is None:
+                    self.arrowsSkins[k] = Surface((0, 0))
+            self.pressedArrowsSkins = temp["pressedArrowsSkins"]
+            for k in range(4):
+                if self.pressedArrowsSkins[k] is None:
+                    self.pressedArrowsSkins[k] = Surface((0, 0))
+            self.greyArrow = temp["greyArrow"]
+            for k in range(4):
+                if self.greyArrow[k] is None:
+                    self.greyArrow[k] = Surface((0, 0))
+            self.longNotesImg = temp["longNotesImg"]
+            for k in range(4):
+                if self.longNotesImg[k] is None:
+                    self.longNotesImg[k] = Surface((0, 0))
             if options.downscroll:
                 for k in range(len(self.longNotesImg)):
                     self.longNotesImg[k] = transform.flip(self.longNotesImg[k], False, True)
-
-            self.longNotesEnd = [
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "left.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "down.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "up.png").convert_alpha(),
-                    (52, 46)),
-                transform.scale(
-                    image.load(
-                        "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
-                            skinName) + os.path.sep + "Long notes" + os.path.sep + "End" + os.path.sep + "right.png").convert_alpha(),
-                    (52, 46))]
-
+            self.longNotesEnd = temp["longNotesEnd"]
+            for k in range(4):
+                if self.longNotesEnd[k] is None:
+                    self.longNotesEnd[k] = Surface((0, 0))
             if options.downscroll:
                 for k in range(len(self.longNotesEnd)):
                     self.longNotesEnd[k] = transform.flip(self.longNotesEnd[k], False, True)
@@ -565,7 +509,7 @@ def Main_game(musicName, options):
     for k in range(temp):
         notesChart.remove(None)
 
-    longNotesLen = 42 // options.selectedSpeed
+    longNotesLen = 41 // options.selectedSpeed
     for note in notesChart:
         if note.length >= longNotesLen > 0 and int(round(note.length // longNotesLen)):
             tempGroup = LongNoteGroup(note.id)
