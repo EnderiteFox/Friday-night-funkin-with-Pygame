@@ -5,11 +5,11 @@ The game is now available as a .exe file, no more installing Python and Pygame!
 
 Current version: 1.8
 
-Changelog here
+[Changelog here](Changelog.md)
 
-Check the wiki here to mod the game!
+Check the wiki [here](https://github.com/EndersteveGamer/Friday-night-funkin-with-Pygame/wiki/Modding-guide-page) to mod the game!
 
-Follow the instructions in the "how to mod" folder to add your own songs!
+Follow the instructions in the wiki to add your own songs!
 
 This game requires Pygame to run the python version, you can download it by typing python3 -m pip install -U pygame --user or py -m pip install -U pygame --user in a cmd.
 
