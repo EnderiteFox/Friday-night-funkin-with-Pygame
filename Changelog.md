@@ -97,3 +97,4 @@ The game is now available as a .exe file! (Took me 3 days to figure out how to d
   - No head red (FNF Trepidation)
 - Arrows are now saved the same way as characters, with png and xml files, so it's now easier to add new arrow styles. Check [here](https://github.com/EndersteveGamer/Friday-night-funkin-with-Pygame/wiki/How-to-add-note-skins) to add note styles
 - Removed "run" and "hellclown" from the music list as they crash the game (they will be readded later once the game has the necessary features to add them back). You can still add them manually from the musicList.json file
+- Fast-editing an offset in the offset editor by pressing shift now edits the offset faster
