@@ -1,5 +1,5 @@
 Planned things for future updates:
-  
+
 v1.9:
 - Special arrows update
 
