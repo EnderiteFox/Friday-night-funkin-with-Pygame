@@ -151,12 +151,18 @@ def Main_game(musicName, options):
                     float(data.attrib["height"]))
 
     def loadArrows(skinName):
-        skinData = json.load(open("assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowData.json"))
-        XMLPath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowSkin.xml"
+        skinData = json.load(open(
+            "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+                skinName) + os.path.sep + "arrowData.json"))
+        XMLPath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+            skinName) + os.path.sep + "arrowSkin.xml"
         XMLFile = ET.parse(XMLPath).getroot()
-        imagePath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(skinName) + os.path.sep + "arrowSkin.png"
+        imagePath = "assets" + os.path.sep + "Images" + os.path.sep + "ArrowStyles" + os.path.sep + "{0}".format(
+            skinName) + os.path.sep + "arrowSkin.png"
         skinImage = image.load(imagePath).convert_alpha()
-        result = {"arrowsSkin": [None for k in range(4)], "pressedArrowsSkins": [None for k in range(4)], "greyArrow": [None for k in range(4)], "longNotesImg": [None for k in range(4)], "longNotesEnd": [None for k in range(4)]}
+        result = {"arrowsSkin": [None for k in range(4)], "pressedArrowsSkins": [None for k in range(4)],
+                  "greyArrow": [None for k in range(4)], "longNotesImg": [None for k in range(4)],
+                  "longNotesEnd": [None for k in range(4)]}
         tempArrows = ["purple alone0000", "blue alone0000", "green alone0000", "red alone0000"]
         tempPressed = ["left press0000", "down press0000", "up press0000", "right press0000"]
         tempGrey = ["arrowLEFT0000", "arrowDOWN0000", "arrowUP0000", "arrowRIGHT0000"]
@@ -371,13 +377,14 @@ def Main_game(musicName, options):
     loadingscreen(3, 6, "Loading chart")
 
     class Note:
-        def __init__(self, pos, column, side, length, noteId, textureName):
+        def __init__(self, pos, column, side, length, noteId, textureName, behaviour=None):
             self.pos = pos
             self.column = column
             self.side = side
             self.length = length
             self.id = noteId
             self.texture = textureName
+            self.behaviour = behaviour
 
     class LongNote:
         def __init__(self, pos, column, side, isEnd, textureName):
@@ -443,6 +450,66 @@ def Main_game(musicName, options):
     else:
         tempPlayAs = ["Opponent", "Player"]
 
+    # Get note behaviour in songData.json
+    try:
+        noteData = json.load(open(
+            "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))
+        if "noteData" in noteData.keys():
+            noteData = notesData["notesTypeData"]
+        else:
+            noteData = "Default"
+    except:
+        noteData = "Default"
+
+    # Get note behaviour data in Data/NoteData/"name"
+    try:
+        noteData = json.load(open("assets" + os.path.sep + "Data" + os.path.sep + "NoteData" + "{0}".format(noteData)))
+    except:
+        noteData = {"notesTypeData": []}
+
+    def applyNoteData(dataDict, note):
+        dataDict = dataDict["notesTypeData"]
+
+        # Get if data valid
+        for condition in dataDict:
+            if not "condition" in condition.keys() and (
+                    not "operator" in condition.keys() or not "value" in condition.keys()):
+                print("Condition is not valid, skipping")
+                dataDict.remove(condition)
+
+        # Treat data
+        for condition in dataDict:
+            # Conditions
+            if condition["condition"] == "column":
+                temp = note.column
+            elif condition["condition"] == "side":
+                temp = note.side
+            else:
+                temp = note.column
+
+            # Operators
+            if data["operator"] == "greater":
+                if temp > condition["value"]:
+                    editNoteData(condition, note)
+            elif data["operator"] == "lower":
+                if temp < condition["value"]:
+                    editNoteData(condition, note)
+            elif data["operator"] == "greaterequal":
+                if temp >= condition["value"]:
+                    editNoteData(condition, note)
+            elif data["operator"] == "lowerequal":
+                if temp <= condition["value"]:
+                    editNoteData(condition, note)
+            else:
+                if temp == condition["value"]:
+                    editNoteData(condition, note)
+
+    def editNoteData(condition, Note):
+        note.behaviour = condition["effect"]
+        note.texture = condition["skin"]
+
+    print("notesData: ", noteData)
+
     tempNoteId = 0
     for section in chart:
         if not useMustHitSection:
@@ -498,7 +565,7 @@ def Main_game(musicName, options):
                 tempNoteId += 1
     # endregion
 
-    # region sort notes and create long notes and double notes fix
+    # region sort notes and create long notes
     notesChart.sort(key=lambda s: s.pos)
 
     temp = 0
@@ -1144,11 +1211,13 @@ def Main_game(musicName, options):
                                             220 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[1]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[1]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[1]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[1]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                 if longNote.column == "Left":
@@ -1161,11 +1230,13 @@ def Main_game(musicName, options):
                                             60 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[0]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[0]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[0]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[0]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                 if longNote.column == "Up":
@@ -1179,11 +1250,13 @@ def Main_game(musicName, options):
                                             380 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[2]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[2]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[2]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[2]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                 if longNote.column == "Right":
@@ -1197,11 +1270,13 @@ def Main_game(musicName, options):
                                             540 + 125,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[3]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[3]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                                     else:
-                                        temp1 = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[3]).convert_alpha()
+                                        temp1 = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[3]).convert_alpha()
                                         temp1.set_alpha(arrow1Alpha * 255)
                                         screen.blit(temp1, temp)
                             if longNote.side == "Player" and "hideNotes2" not in modifications:
@@ -1216,9 +1291,11 @@ def Main_game(musicName, options):
                                             width - 220 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[2]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[2]).convert_alpha()
                                     else:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[2]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[2]).convert_alpha()
                                     if arrow2Alpha:
                                         if transparent:
                                             img.set_alpha(100)
@@ -1236,9 +1313,11 @@ def Main_game(musicName, options):
                                             width - 380 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[1]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[1]).convert_alpha()
                                     else:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[1]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[1]).convert_alpha()
                                     if arrow2Alpha == 1:
                                         if transparent:
                                             img.set_alpha(100)
@@ -1256,9 +1335,11 @@ def Main_game(musicName, options):
                                             width - 540 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[0]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[0]).convert_alpha()
                                     else:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[0]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[0]).convert_alpha()
                                     if arrow2Alpha == 1:
                                         if transparent:
                                             img.set_alpha(100)
@@ -1276,9 +1357,11 @@ def Main_game(musicName, options):
                                             width - 60 - 25,
                                             height - 50 - (longNote.pos - currentTime * 1000) * options.selectedSpeed)
                                     if longNote.isEnd:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesEnd[3]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesEnd[3]).convert_alpha()
                                     else:
-                                        img = copy.copy(loadedArrowTextures[longNote.texture].longNotesImg[3]).convert_alpha()
+                                        img = copy.copy(
+                                            loadedArrowTextures[longNote.texture].longNotesImg[3]).convert_alpha()
                                     if arrow2Alpha == 1:
                                         if transparent:
                                             img.set_alpha(100)
