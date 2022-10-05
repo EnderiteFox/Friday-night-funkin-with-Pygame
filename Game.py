@@ -385,6 +385,13 @@ def Main_game(musicName, options):
             self.id = noteId
             self.texture = textureName
             self.behaviour = behaviour
+            self.columnid = -1
+            self.columnid2 = -1
+            self.columnid3 = -1
+            self.bigHealthBoost = 2.3
+            self.smallHealthBoost = 0.4
+            self.healthPenalty = -4
+            self.mustAvoid = False
 
     class LongNote:
         def __init__(self, pos, column, side, isEnd, textureName):
@@ -455,7 +462,7 @@ def Main_game(musicName, options):
         noteData = json.load(open(
             "assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(musicName) + os.path.sep + "songData.json"))
         if "noteData" in noteData.keys():
-            noteData = notesData["notesTypeData"]
+            noteData = noteData["noteData"]
         else:
             noteData = "Default"
     except:
@@ -463,7 +470,7 @@ def Main_game(musicName, options):
 
     # Get note behaviour data in Data/NoteData/"name"
     try:
-        noteData = json.load(open("assets" + os.path.sep + "Data" + os.path.sep + "NoteData" + "{0}".format(noteData)))
+        noteData = json.load(open("assets" + os.path.sep + "Data" + os.path.sep + "NoteData" + os.path.sep+ "{0}".format(noteData) + ".json"))
     except:
         noteData = {"notesTypeData": []}
 
@@ -484,31 +491,43 @@ def Main_game(musicName, options):
                 temp = note.column
             elif condition["condition"] == "side":
                 temp = note.side
+            elif condition["condition"] == "columnid":
+                temp = note.columnid
+            elif condition["condition"] == "columnid2":
+                temp = note.columnid2
+            elif condition["condition"] == "columnid3":
+                temp = note.columnid3
             else:
                 temp = note.column
 
             # Operators
-            if data["operator"] == "greater":
+            if condition["operator"] == "greater":
                 if temp > condition["value"]:
                     editNoteData(condition, note)
-            elif data["operator"] == "lower":
+            elif condition["operator"] == "lower":
                 if temp < condition["value"]:
                     editNoteData(condition, note)
-            elif data["operator"] == "greaterequal":
+            elif condition["operator"] == "greaterequal":
                 if temp >= condition["value"]:
                     editNoteData(condition, note)
-            elif data["operator"] == "lowerequal":
+            elif condition["operator"] == "lowerequal":
                 if temp <= condition["value"]:
                     editNoteData(condition, note)
             else:
                 if temp == condition["value"]:
                     editNoteData(condition, note)
 
-    def editNoteData(condition, Note):
+    def editNoteData(condition, note):
         note.behaviour = condition["effect"]
         note.texture = condition["skin"]
-
-    print("notesData: ", noteData)
+        if "setBigHealthBoost" in condition.keys():
+            note.bigHealthBoost = condition["setBigHealthBoost"]
+        if "setSmallHealthBoost" in condition.keys():
+            note.smallHealthBoost = condition["setSmallHealthBoost"]
+        if "setHealthPenalty" in condition.keys():
+            note.healthPenalty = condition["setHealthPenalty"]
+        if "setMustAvoid" in condition.keys():
+            note.mustAvoid = condition["setMustAvoid"] == "True"
 
     tempNoteId = 0
     for section in chart:
@@ -561,7 +580,20 @@ def Main_game(musicName, options):
                         if note[1] == 3 or note[1] == 7:
                             tempDirection = "Right"
                 tempTextureName = tempUser
-                notesChart.append(Note(note[0], tempDirection, tempUser, note[2], tempNoteId, tempTextureName))
+                tempNote = Note(note[0], tempDirection, tempUser, note[2], tempNoteId, tempTextureName)
+                tempNote.columnid = note[1]
+                if len(note) > 2:
+                    if note[2] is None:
+                        tempNote.columnid2 = -1
+                    else:
+                        tempNote.columnid2 = note[2]
+                if len(note) > 3:
+                    if note[3] is None:
+                        tempNote.columnid3 = -1
+                    else:
+                        tempNote.columnid3 = note[3]
+                applyNoteData(noteData, tempNote)
+                notesChart.append(tempNote)
                 tempNoteId += 1
     # endregion
 
@@ -1048,12 +1080,14 @@ def Main_game(musicName, options):
                             noteGroup.canDealDamage = False
                             break
                     notesChart.remove(note)
-                    misses += 1
-                    health -= 4
+                    if not note.mustAvoid:
+                        misses += 1
+                    health += note.healthPenalty
                     if health < 0:
                         health = 0
-                    accuracyPercentList.append(0)
-                    combo = 0
+                    if not note.mustAvoid:
+                        accuracyPercentList.append(0)
+                        combo = 0
                 if 50 + (note.pos - currentTime * 1000) * options.selectedSpeed < display.Info().current_h + 100:
                     if not singlePlayer and "hideNotes1" not in modifications:
                         if note.side == "Opponent" and note.column == "Down":
@@ -1700,8 +1734,9 @@ def Main_game(musicName, options):
                         minX = x
                     x += 1
                 accuracy = str(round(notesToClear[k][minX].pos - currentTime * 1000, 2))
-                showAccuracy = True
-                accuracyDisplayTime = Time.time()
+                if not notesToClear[k][minX].mustAvoid:
+                    showAccuracy = True
+                    accuracyDisplayTime = Time.time()
                 # region Accuracy timings info
                 # Sick: <= 47
                 # Good: <= 79
@@ -1709,27 +1744,41 @@ def Main_game(musicName, options):
                 # Shit: <= 133
                 # endregion
                 if currentTime * 1000 + 47 >= notesToClear[k][minX].pos >= currentTime * 1000 - 47:
-                    accuracyIndicator = accuracyIndicatorImages[0]
-                    accuracyPercentList.append(1)
-                    health += 2.3
-                    combo += 1
+                    if not notesToClear[k][minX].mustAvoid:
+                        accuracyIndicator = accuracyIndicatorImages[0]
+                        accuracyPercentList.append(1)
+                        combo += 1
+                    else:
+                        misses += 1
+                        combo = 0
+                    health += notesToClear[k][minX].bigHealthBoost
                 elif currentTime * 1000 + 79 >= notesToClear[k][minX].pos >= currentTime * 1000 - 79:
-                    accuracyIndicator = accuracyIndicatorImages[1]
-                    accuracyPercentList.append(0.75)
-                    health += 0.4
-                    combo += 1
+                    if not notesToClear[k][minX].mustAvoid:
+                        accuracyIndicator = accuracyIndicatorImages[1]
+                        accuracyPercentList.append(0.75)
+                        combo += 1
+                    else:
+                        misses += 1
+                        combo = 0
+                    health += notesToClear[k][minX].smallHealthBoost
                 elif currentTime * 1000 + 109 >= notesToClear[k][minX].pos >= currentTime * 1000 - 109:
-                    accuracyIndicator = accuracyIndicatorImages[2]
-                    accuracyPercentList.append(0.5)
-                    health += 0.4
-                    combo += 1
+                    if not notesToClear[k][minX].mustAvoid:
+                        accuracyIndicator = accuracyIndicatorImages[2]
+                        accuracyPercentList.append(0.5)
+                        combo += 1
+                    else:
+                        misses += 1
+                        combo = 0
+                    health += notesToClear[k][minX].smallHealthBoost
                 else:
-                    accuracyIndicator = accuracyIndicatorImages[3]
-                    accuracyPercentList.append(-1)
+                    if not notesToClear[k][minX].mustAvoid:
+                        accuracyIndicator = accuracyIndicatorImages[3]
+                        accuracyPercentList.append(-1)
                     misses += 1
-                    health -= 4
                     combo = 0
-                playerAnimation = [notesToClear[k][minX].column, currentTime]
+                    health -= notesToClear[k][minX].healthPenalty
+                if not notesToClear[k][minX].mustAvoid:
+                    playerAnimation = [notesToClear[k][minX].column, currentTime]
                 notesChart.remove(notesToClear[k][minX])
         if health > 100:
             health = 100
