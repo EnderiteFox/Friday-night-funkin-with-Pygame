@@ -6,6 +6,7 @@ import sys
 import copy
 import xml.etree.ElementTree as ET
 import os
+from assets.Code.Class.NotesClasses import *
 
 Inst = None
 Vocals = None
@@ -376,41 +377,7 @@ def Main_game(musicName, options):
     # region chart managment
     loadingscreen(3, 6, "Loading chart")
 
-    class Note:
-        def __init__(self, pos, column, side, length, noteId, textureName, behaviour=None):
-            self.pos = pos
-            self.column = column
-            self.side = side
-            self.length = length
-            self.id = noteId
-            self.texture = textureName
-            self.behaviour = behaviour
-            self.columnid = -1
-            self.columnid2 = -1
-            self.columnid3 = -1
-            self.bigHealthBoost = 2.3
-            self.smallHealthBoost = 0.4
-            self.healthPenalty = -4
-            self.mustAvoid = False
-
-    class LongNote:
-        def __init__(self, pos, column, side, isEnd, textureName):
-            self.pos = pos
-            self.column = column
-            self.side = side
-            self.isEnd = isEnd
-            self.texture = textureName
-
-    class LongNoteGroup:
-        def __init__(self, groupId):
-            self.id = groupId
-            self.notes = []
-            self.size = 0
-            self.canDealDamage = True
-
-        def setSize(self):
-            self.notes.remove(self.notes[0])
-            self.size = len(self.notes)
+    # Old Notes classes position
 
     # region tests if chart uses mustHitSection
     notesChart = []
@@ -470,7 +437,9 @@ def Main_game(musicName, options):
 
     # Get note behaviour data in Data/NoteData/"name"
     try:
-        noteData = json.load(open("assets" + os.path.sep + "Data" + os.path.sep + "NoteData" + os.path.sep+ "{0}".format(noteData) + ".json"))
+        noteData = json.load(open(
+            "assets" + os.path.sep + "Data" + os.path.sep + "NoteData" + os.path.sep + "{0}".format(
+                noteData) + ".json"))
     except:
         noteData = {"notesTypeData": []}
 
@@ -528,6 +497,14 @@ def Main_game(musicName, options):
             note.healthPenalty = condition["setHealthPenalty"]
         if "setMustAvoid" in condition.keys():
             note.mustAvoid = condition["setMustAvoid"] == "True"
+        if "setColumn" in condition.keys():
+            note.column = condition["setColumn"]
+        if "setSide" in condition.keys():
+            note.side = condition["setSide"]
+        if "setHitModchart" in condition.keys():
+            note.hitModchart = condition["setHitModchart"]
+        if "setMissModchart" in condition.keys():
+            note.missModchart = condition["setMissModchart"]
 
     tempNoteId = 0
     for section in chart:
@@ -830,7 +807,9 @@ def Main_game(musicName, options):
 
     # Load characters
     if options.playAs == "Player":
+        # Load normal characters
         try:
+            # Load opponent character
             characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
                 musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
             try:
@@ -851,6 +830,7 @@ def Main_game(musicName, options):
                 print(e)
             character1 = Character("None", 1)
         try:
+            # Load player character
             characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
                 musicName) + os.path.sep + "songData.json"))["character2"]["Name"]
             try:
@@ -871,32 +851,14 @@ def Main_game(musicName, options):
                 print(error)
             character2 = Character("None", 2)
     else:
+        # Invert characters
         try:
+            # Load opponent character
             characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
                 musicName) + os.path.sep + "songData.json"))["character1"]["Name"]
             try:
                 alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
                     musicName) + os.path.sep + "songData.json"))["character1"]["alias"]
-            except:
-                alias = None
-            if alias is None:
-                loadedCharacters[characterName] = Character(characterName, 1)
-                character1 = loadedCharacters[characterName]
-            else:
-                loadedCharacters[alias] = Character(characterName, 1)
-                character1 = loadedCharacters[alias]
-        except error as e:
-            print("Opponent character loading failed, skipping loading")
-            if options.debugMode:
-                print("Debug mode stopped the program, printing error:")
-                print(e)
-            character1 = Character("None", 1)
-        try:
-            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                musicName) + os.path.sep + "songData.json"))["character2"]["Name"]
-            try:
-                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
-                    musicName) + os.path.sep + "songData.json"))["character2"]["alias"]
             except:
                 alias = None
             if alias is None:
@@ -906,11 +868,32 @@ def Main_game(musicName, options):
                 loadedCharacters[alias] = Character(characterName, 2)
                 character2 = loadedCharacters[alias]
         except error as e:
-            print("Player character loading failed, skipping loading")
+            print("Opponent character loading failed, skipping loading")
             if options.debugMode:
                 print("Debug mode stopped the program, printing error:")
                 print(e)
             character2 = Character("None", 2)
+        try:
+            # Load player character
+            characterName = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                musicName) + os.path.sep + "songData.json"))["character2"]["Name"]
+            try:
+                alias = json.load(open("assets" + os.path.sep + "Musics" + os.path.sep + "{0}".format(
+                    musicName) + os.path.sep + "songData.json"))["character2"]["alias"]
+            except:
+                alias = None
+            if alias is None:
+                loadedCharacters[characterName] = Character(characterName, 1)
+                character1 = loadedCharacters[characterName]
+            else:
+                loadedCharacters[alias] = Character(characterName, 1)
+                character1 = loadedCharacters[alias]
+        except error as e:
+            print("Player character loading failed, skipping loading")
+            if options.debugMode:
+                print("Debug mode stopped the program, printing error:")
+                print(e)
+            character1 = Character("None", 1)
 
     if singlePlayer:
         print("Resolution too low to display both characters, using singleplayer mode")
@@ -1082,6 +1065,7 @@ def Main_game(musicName, options):
                     notesChart.remove(note)
                     if not note.mustAvoid:
                         misses += 1
+                        update_modifications(note.missModchart, note.missModchart)
                     health += note.healthPenalty
                     if health < 0:
                         health = 0
@@ -1743,6 +1727,7 @@ def Main_game(musicName, options):
                 # Bad: <= 109
                 # Shit: <= 133
                 # endregion
+                executeNoteModchart = True
                 if currentTime * 1000 + 47 >= notesToClear[k][minX].pos >= currentTime * 1000 - 47:
                     if not notesToClear[k][minX].mustAvoid:
                         accuracyIndicator = accuracyIndicatorImages[0]
@@ -1777,8 +1762,11 @@ def Main_game(musicName, options):
                     misses += 1
                     combo = 0
                     health -= notesToClear[k][minX].healthPenalty
+                    executeNoteModchart = False
                 if not notesToClear[k][minX].mustAvoid:
                     playerAnimation = [notesToClear[k][minX].column, currentTime]
+                if executeNoteModchart:
+                    update_modifications(notesToClear[k][minX].hitModchart, notesToClear[k][minX].hitModchart)
                 notesChart.remove(notesToClear[k][minX])
         if health > 100:
             health = 100
