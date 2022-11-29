@@ -25,6 +25,7 @@ character1 = None
 character2 = None
 character1Alpha = 1
 character2Alpha = 1
+currentTime = 0
 
 
 def Main_game(musicName, options):
@@ -45,6 +46,7 @@ def Main_game(musicName, options):
     global character2
     global character1Alpha
     global character2Alpha
+    global currentTime
 
     misses = 0
     health = 50
@@ -1588,37 +1590,49 @@ def Main_game(musicName, options):
                 dynamic_modifications.remove(mod)
             if mod["type"] == "arrowAlphaChange":
                 try:
-                    temp = mod["pos"]
+                    print("________")
+                    print("Real time:")
+                    print(currentTime)
+                    print("Mod time:")
+                    print(modchartGetValue("currentTime"))
+                    temp = modchartGetValue(mod["pos"])
+                    print("temp time:")
+                    print(temp)
+                    print("________")
                 except:
                     temp = 0
                 if currentTime >= temp:
                     if mod["player"] == 1:
                         transitionValuesList.append(
-                            transitionValue("arrow1Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
-                                            mod["endTime"]))
+                            transitionValue("arrow1Alpha", modchartGetValue(mod["startValue"]),
+                                            modchartGetValue(mod["endValue"]), modchartGetValue(mod["startTime"]),
+                                            modchartGetValue(mod["endTime"])))
                     if mod["player"] == 2:
                         transitionValuesList.append(
-                            transitionValue("arrow2Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
-                                            mod["endTime"]))
+                            transitionValue("arrow2Alpha", modchartGetValue(mod["startValue"]),
+                                            modchartGetValue(mod["endValue"]), modchartGetValue(mod["startTime"]),
+                                            modchartGetValue(mod["endTime"])))
                     dynamic_modifications.remove(mod)
             if mod["type"] == "characterAlphaChange":
                 try:
-                    temp = mod["pos"]
+                    temp = modchartGetValue(mod["pos"])
                 except:
                     temp = 0
                 if currentTime >= temp:
                     if mod["player"] == 1:
                         transitionValuesList.append(
-                            transitionValue("character1Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
-                                            mod["endTime"]))
+                            transitionValue("character1Alpha", modchartGetValue(mod["startValue"]),
+                                            modchartGetValue(mod["endValue"]), modchartGetValue(mod["startTime"]),
+                                            modchartGetValue(mod["endTime"])))
                     if mod["player"] == 2:
                         transitionValuesList.append(
-                            transitionValue("character2Alpha", mod["startValue"], mod["endValue"], mod["startTime"],
-                                            mod["endTime"]))
+                            transitionValue("character2Alpha", modchartGetValue(mod["startValue"]),
+                                            modchartGetValue(mod["endValue"]), modchartGetValue(mod["startTime"]),
+                                            modchartGetValue(mod["endTime"])))
                     dynamic_modifications.remove(mod)
             if mod["type"] == "changeCharacter":
                 try:
-                    temp = mod["pos"]
+                    temp = modchartGetValue(mod["pos"])
                 except:
                     temp = 0
                 if currentTime >= temp:
@@ -1629,7 +1643,7 @@ def Main_game(musicName, options):
                     dynamic_modifications.remove(mod)
             if mod["type"] == "changeArrowTexture":
                 try:
-                    temp = mod["pos"]
+                    temp = modchartGetValue(mod["pos"])
                 except:
                     temp = 0
                 if currentTime >= temp:
@@ -1661,6 +1675,70 @@ def Main_game(musicName, options):
             if mod["type"] == "arrowTextureLoading":
                 loadedArrowTextures[mod["loadedName"]] = arrowTexture(mod["textureName"])
 
+    def modchartGetStringArguments(string):
+        temp = ""
+        arguments = []
+        for letter in string:
+            if letter != " ":
+                temp += letter
+            else:
+                arguments.append(temp)
+                temp = ""
+        arguments.append(temp)
+        return arguments
+
+    def modchartEvaluateString(string):
+        arguments = modchartGetStringArguments(string)
+        for k in range(len(arguments)):
+            try:
+                temp = int(arguments[k])
+            except:
+                temp = arguments[k]
+            arguments[k] = temp
+        for k in range(len(arguments)):
+            if arguments[k] not in ["+", "-", "*", "/", "%", "^"] and getVariableValue(arguments[k]) is not None:
+                arguments[k] = getVariableValue(arguments[k])
+        total = 0
+        print("Debug")
+        print(total)
+        # TODO: Problem here:
+        if not isinstance(arguments[0], str):
+            total = arguments[0]
+        print(total)
+        for k in range(len(arguments)):
+            if isinstance(arguments[k], str):
+                if arguments[k] == "+":
+                    total += arguments[k + 1]
+                elif arguments[k] == "-":
+                    total -= arguments[k + 1]
+                elif arguments[k] == "*":
+                    total *= arguments[k + 1]
+                elif arguments[k] == "/":
+                    total /= arguments[k + 1]
+                elif arguments[k] == "%":
+                    total %= arguments[k + 1]
+                elif arguments[k] == "^":
+                    total **= arguments[k + 1]
+        print("test: " + str(total))
+        return total
+
+    def getVariableValue(variableName):
+        try:
+            temp = globals()[variableName]
+            return temp
+        except:
+            try:
+                temp = locals()[variableName]
+                return temp
+            except:
+                return None
+
+    def modchartGetValue(value):
+        if isinstance(value, str):
+            return modchartEvaluateString(value)
+        else:
+            return value
+
     modchartLoading()
 
     loadingscreen(6, 6, "Finishing...")
@@ -1673,6 +1751,7 @@ def Main_game(musicName, options):
 
     startTime = Time.time()
     while True:
+        currentTime = (Time.time() - startTime) * 1000
         notesToClear = [[], [], [], []]
         for events in event.get():
             if events.type == QUIT:
