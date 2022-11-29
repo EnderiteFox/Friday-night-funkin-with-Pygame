@@ -100,8 +100,6 @@ The game is now available as a .exe file! (Took me 3 days to figure out how to d
 - Fast-editing an offset in the offset editor by pressing shift now edits the offset faster
 
 # v1.9
-
-v1.9 (Special arrows update):
 - You can now use the + and - key to change the volume of the game (WIP)
 - Special notes were added!
   - These notes can have a different note skin than the others
