@@ -4,6 +4,7 @@ from random import *
 from Game import Main_game
 import os
 from Offset_editor import offset_editor
+from Arrow_editor import arrow_editor
 
 init()
 
@@ -35,7 +36,6 @@ class Options:
         self.update()
 
     def update(self):
-        global availableNoteStyles
         global K_a, K_s, K_w, K_d
         global K_LEFT, K_DOWN, K_UP, K_RIGHT
         self.availableNoteStyles = availableNoteStyles
@@ -262,7 +262,7 @@ while True:
                     if (events.key == K_d or (
                             (events.key == K_RIGHT and K_RIGHT != 1073741903 and K_LEFT != 1073741903) or (
                             events.key == 1073741903))) and options.selectedNoteStyle < len(
-                            availableNoteStyles) - 1:
+                        availableNoteStyles) - 1:
                         options.selectedNoteStyle += 1
                 if selectedOption == 4:
                     if (events.key == K_a or (

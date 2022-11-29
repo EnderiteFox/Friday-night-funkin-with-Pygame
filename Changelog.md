@@ -98,3 +98,11 @@ The game is now available as a .exe file! (Took me 3 days to figure out how to d
 - Arrows are now saved the same way as characters, with png and xml files, so it's now easier to add new arrow styles. Check [here](https://github.com/EndersteveGamer/Friday-night-funkin-with-Pygame/wiki/How-to-add-note-skins) to add note styles
 - Removed "run" and "hellclown" from the music list as they crash the game (they will be readded later once the game has the necessary features to add them back). You can still add them manually from the musicList.json file
 - Fast-editing an offset in the offset editor by pressing shift now edits the offset faster
+
+# v1.9
+- You can now use the + and - key to change the volume of the game (WIP)
+- Special notes were added!
+  - These notes can have a different note skin than the others
+  - You can edit the amount of health that these notes add or remove when hitting or missing the note
+  - These notes can be marked as mustHit (so they won't count as a miss if you don't hit them)
+  - They can also execute modcharts when you hit or miss them (WIP)
