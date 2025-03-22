@@ -1,3 +1,5 @@
+# I stopped working on this project, so these features aren't planned anymore
+
 Planned things for future updates:
 
 v1.10:
